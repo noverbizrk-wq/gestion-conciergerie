@@ -28,6 +28,17 @@ export async function requireRole(
   companyId: string,
   allowedRoles: AppRole[]
 ): Promise<AuthContext> {
+  // ⚠️ Court-circuit DEV UNIQUEMENT : tant que l'auth Supabase réelle n'est pas
+  // branchée (voir README, section "Limitations connues"), on autorise l'accès
+  // en local avec le rôle ADMIN dès lors qu'aucun projet Supabase n'est configuré.
+  // Ne JAMAIS activer en production (NODE_ENV === "production" désactive ce chemin).
+  if (
+    process.env.NODE_ENV !== "production" &&
+    !process.env.NEXT_PUBLIC_SUPABASE_URL
+  ) {
+    return { userId: "local-dev-user", companyId, role: "ADMIN" };
+  }
+
   const supabase = await createSupabaseServerClient();
   const {
     data: { user },
