@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { createSupabaseServerClient } from "@/lib/supabase-server";
+import { auth } from "@/lib/auth";
 
 export type AppRole = "ADMIN" | "ACCOUNTANT" | "EMPLOYEE" | "READONLY";
 
@@ -18,7 +18,7 @@ export interface AuthContext {
 
 /**
  * À appeler en tête de chaque server action.
- * Vérifie la session Supabase, résout l'appartenance (Membership) à la société
+ * Vérifie la session (NextAuth), résout l'appartenance (Membership) à la société
  * ciblée, et s'assure que le rôle de l'utilisateur fait partie des rôles autorisés.
  *
  * Toute requête Prisma déclenchée ensuite doit filtrer explicitement par
@@ -28,33 +28,15 @@ export async function requireRole(
   companyId: string,
   allowedRoles: AppRole[]
 ): Promise<AuthContext> {
-  // ⚠️ Court-circuit DEV UNIQUEMENT : tant que l'auth Supabase réelle n'est pas
-  // branchée (voir README, section "Limitations connues"), on autorise l'accès
-  // en local avec le rôle ADMIN dès lors qu'aucun projet Supabase n'est configuré.
-  // Ne JAMAIS activer en production (NODE_ENV === "production" désactive ce chemin).
-  if (
-    process.env.NODE_ENV !== "production" &&
-    !process.env.NEXT_PUBLIC_SUPABASE_URL
-  ) {
-    return { userId: "local-dev-user", companyId, role: "ADMIN" };
-  }
+  const session = await auth();
+  const userId = session?.user?.id;
 
-  const supabase = await createSupabaseServerClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
+  if (!userId) {
     throw new UnauthorizedError("Session invalide ou expirée");
   }
 
-  const dbUser = await prisma.user.findUnique({ where: { supabaseAuthId: user.id } });
-  if (!dbUser) {
-    throw new UnauthorizedError("Utilisateur inconnu en base");
-  }
-
   const membership = await prisma.membership.findUnique({
-    where: { userId_companyId: { userId: dbUser.id, companyId } },
+    where: { userId_companyId: { userId, companyId } },
   });
 
   if (!membership) {
@@ -67,5 +49,25 @@ export async function requireRole(
     );
   }
 
-  return { userId: dbUser.id, companyId, role: membership.role as AppRole };
+  return { userId, companyId, role: membership.role as AppRole };
+}
+
+/**
+ * Résout la société "courante" de l'utilisateur connecté : la première société
+ * dont il est membre (triée par ancienneté du membership). Suffisant tant que
+ * l'app ne gère qu'une société par utilisateur ; à faire évoluer vers un vrai
+ * sélecteur multi-société si besoin plus tard.
+ */
+export async function getCurrentUserMembership() {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+
+  const membership = await prisma.membership.findFirst({
+    where: { userId },
+    orderBy: { createdAt: "asc" },
+    include: { company: true, user: true },
+  });
+
+  return membership;
 }

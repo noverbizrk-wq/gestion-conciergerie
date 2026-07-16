@@ -1,6 +1,5 @@
 import { listPropertiesAction } from "@/modules/properties/actions";
-
-const DEMO_COMPANY_ID = process.env.DEMO_COMPANY_ID ?? "";
+import { getCurrentUserMembership } from "@/lib/auth-guard";
 
 const TYPE_LABELS: Record<string, string> = {
   STUDIO: "Studio",
@@ -12,7 +11,8 @@ const TYPE_LABELS: Record<string, string> = {
 };
 
 export default async function PropertiesPage() {
-  const properties = DEMO_COMPANY_ID ? await listPropertiesAction(DEMO_COMPANY_ID) : [];
+  const membership = await getCurrentUserMembership();
+  const properties = membership ? await listPropertiesAction(membership.companyId) : [];
 
   return (
     <div>

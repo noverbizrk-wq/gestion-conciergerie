@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { LayoutDashboard, Users, Home, FileText, Upload, Sparkles } from "lucide-react";
+import { getCurrentUserMembership } from "@/lib/auth-guard";
+import { SignOutButton } from "@/components/sign-out-button";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
@@ -10,7 +12,16 @@ const NAV_ITEMS = [
   { href: "/assistant", label: "Assistant IA", icon: Sparkles },
 ];
 
-export function Sidebar() {
+const ROLE_LABELS: Record<string, string> = {
+  ADMIN: "Administrateur",
+  ACCOUNTANT: "Comptable",
+  EMPLOYEE: "Employé",
+  READONLY: "Lecture seule",
+};
+
+export async function Sidebar() {
+  const membership = await getCurrentUserMembership();
+
   return (
     <aside className="w-64 shrink-0 border-r border-[var(--color-line)] bg-[var(--color-paper-raised)] flex flex-col">
       <div className="px-6 py-6 border-b border-[var(--color-line)]">
@@ -31,6 +42,15 @@ export function Sidebar() {
           </Link>
         ))}
       </nav>
+      {membership ? (
+        <div className="px-6 py-4 border-t border-[var(--color-line)]">
+          <p className="text-sm font-medium text-[var(--color-ink)]">{membership.user?.name ?? membership.user?.email}</p>
+          <p className="text-xs text-[var(--color-ink-soft)] mb-2">
+            {ROLE_LABELS[membership.role] ?? membership.role} · {membership.company.name}
+          </p>
+          <SignOutButton />
+        </div>
+      ) : null}
     </aside>
   );
 }

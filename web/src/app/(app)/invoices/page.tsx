@@ -1,6 +1,5 @@
 import { listInvoicesAction } from "@/modules/invoicing/actions";
-
-const DEMO_COMPANY_ID = process.env.DEMO_COMPANY_ID ?? "";
+import { getCurrentUserMembership } from "@/lib/auth-guard";
 
 const STATUS_STYLES: Record<string, string> = {
   DRAFT: "bg-slate-100 text-slate-600",
@@ -19,7 +18,8 @@ const STATUS_LABELS: Record<string, string> = {
 };
 
 export default async function InvoicesPage() {
-  const invoices = DEMO_COMPANY_ID ? await listInvoicesAction(DEMO_COMPANY_ID) : [];
+  const membership = await getCurrentUserMembership();
+  const invoices = membership ? await listInvoicesAction(membership.companyId) : [];
 
   return (
     <div>
@@ -76,7 +76,7 @@ export default async function InvoicesPage() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <a
-                      href={`/api/invoices/${invoice.id}/pdf?companyId=${DEMO_COMPANY_ID}`}
+                      href={`/api/invoices/${invoice.id}/pdf?companyId=${membership?.companyId ?? ""}`}
                       className="text-[var(--color-brass-dark)] hover:underline text-xs"
                       target="_blank"
                     >

@@ -121,13 +121,13 @@ model Company {
 }
 
 model User {
-  id             String       @id @default(cuid())
-  email          String       @unique
-  name           String?
-  supabaseAuthId String       @unique
-  createdAt      DateTime     @default(now())
-  memberships    Membership[]
-  auditLogs      AuditLog[]
+  id           String       @id @default(cuid())
+  email        String       @unique
+  name         String?
+  passwordHash String
+  createdAt    DateTime     @default(now())
+  memberships  Membership[]
+  auditLogs    AuditLog[]
 
   @@map("users")
 }

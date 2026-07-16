@@ -1,9 +1,9 @@
 import { listOwnersAction } from "@/modules/owners/actions";
-
-const DEMO_COMPANY_ID = process.env.DEMO_COMPANY_ID ?? "";
+import { getCurrentUserMembership } from "@/lib/auth-guard";
 
 export default async function OwnersPage() {
-  const owners = DEMO_COMPANY_ID ? await listOwnersAction(DEMO_COMPANY_ID) : [];
+  const membership = await getCurrentUserMembership();
+  const owners = membership ? await listOwnersAction(membership.companyId) : [];
 
   return (
     <div>

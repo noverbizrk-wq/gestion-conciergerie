@@ -1,9 +1,13 @@
 import "dotenv/config";
 import { PrismaClient } from "@prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
+import bcrypt from "bcryptjs";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! });
 const prisma = new PrismaClient({ adapter });
+
+const ADMIN_EMAIL = "amira.douira@noverclean.fr";
+const ADMIN_PASSWORD = "NoverClean2026!";
 
 /**
  * Seed de démonstration : une société, un propriétaire, un logement, deux réservations.
@@ -82,7 +86,26 @@ async function main() {
     ],
   });
 
-  console.log("Seed terminé. companyId à utiliser en DEMO_COMPANY_ID :", company.id);
+  const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
+  const adminUser = await prisma.user.create({
+    data: {
+      email: ADMIN_EMAIL,
+      name: "Amira Douira",
+      passwordHash,
+    },
+  });
+
+  await prisma.membership.create({
+    data: {
+      userId: adminUser.id,
+      companyId: company.id,
+      role: "ADMIN",
+    },
+  });
+
+  console.log("Seed terminé.");
+  console.log("  companyId :", company.id);
+  console.log("  Connexion : ", ADMIN_EMAIL, "/", ADMIN_PASSWORD, "(à changer après premier login)");
 }
 
 main()

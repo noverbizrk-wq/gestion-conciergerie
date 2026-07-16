@@ -1,17 +1,16 @@
 import { getDashboardMetrics } from "@/modules/dashboard/metrics";
 import { KpiCard } from "@/components/kpi-card";
-
-// TODO: remplacer par la résolution de la société courante via la session (Supabase Auth + Membership)
-const DEMO_COMPANY_ID = process.env.DEMO_COMPANY_ID ?? "";
+import { getCurrentUserMembership } from "@/lib/auth-guard";
 
 export default async function DashboardPage() {
-  if (!DEMO_COMPANY_ID) {
+  const membership = await getCurrentUserMembership();
+  if (!membership) {
     return (
-      <EmptyState message="Aucune société configurée. Renseignez DEMO_COMPANY_ID dans .env ou branchez la résolution de session Supabase (voir src/lib/auth-guard.ts)." />
+      <EmptyState message="Votre compte n'est rattaché à aucune société pour le moment. Contactez un administrateur." />
     );
   }
 
-  const metrics = await getDashboardMetrics(DEMO_COMPANY_ID);
+  const metrics = await getDashboardMetrics(membership.companyId);
 
   return (
     <div>
