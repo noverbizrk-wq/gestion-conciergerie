@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gestion-conciergerie-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: nover
+      POSTGRES_PASSWORD: nover
+      POSTGRES_DB: gestion_conciergerie
+    ports:
+      - "5433:5432"
+    volumes:
+      - gestion-conciergerie-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nover -d gestion_conciergerie"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  gestion-conciergerie-pgdata:
