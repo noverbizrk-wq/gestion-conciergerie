@@ -1,0 +1,364 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─────────────────────────────────────────────
+// ENUMS
+// ─────────────────────────────────────────────
+
+enum VatRegime {
+  REEL
+  FRANCHISE
+  INHERIT_COMPANY
+}
+
+enum Role {
+  ADMIN
+  ACCOUNTANT
+  EMPLOYEE
+  READONLY
+}
+
+enum PaymentMethod {
+  VIREMENT
+  CB
+  ESPECES
+  STRIPE
+  GOCARDLESS
+}
+
+enum PropertyType {
+  STUDIO
+  T2
+  T3
+  T4_PLUS
+  MAISON
+  APPARTEMENT
+}
+
+enum CommissionMode {
+  FIXED_PERCENT
+  VARIABLE_TIERS
+}
+
+enum BilledTo {
+  OWNER
+  GUEST
+}
+
+enum BookingSource {
+  AIRBNB
+  BOOKING
+  SMOOBU
+  HOSTAWAY
+  GUESTY
+}
+
+enum BookingStatus {
+  IMPORTED
+  INVOICED
+  IGNORED
+}
+
+enum InvoiceType {
+  COMMISSION
+  CLEANING
+  MIXED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  CONFIRMED
+  FAILED
+}
+
+enum DocumentType {
+  CONTRAT
+  RIB
+  PIECE_IDENTITE
+  AUTRE
+}
+
+// ─────────────────────────────────────────────
+// CORE / MULTI-TENANT
+// ─────────────────────────────────────────────
+
+model Company {
+  id               String    @id @default(cuid())
+  name             String
+  siret            String?
+  tvaIntracom      String?
+  address          String?
+  iban             String?
+  logoUrl          String?
+  brandColor       String    @default("#0F172A")
+  defaultVatRate   Decimal   @default(20) @db.Decimal(5, 2)
+  defaultVatRegime VatRegime @default(REEL)
+  invoiceCounter   Int       @default(0)
+  createdAt        DateTime  @default(now())
+  updatedAt        DateTime  @updatedAt
+
+  memberships Membership[]
+  owners      Owner[]
+  properties  Property[]
+  invoices    Invoice[]
+  auditLogs   AuditLog[]
+  bookings    Booking[]
+
+  @@map("companies")
+}
+
+model User {
+  id             String       @id @default(cuid())
+  email          String       @unique
+  name           String?
+  supabaseAuthId String       @unique
+  createdAt      DateTime     @default(now())
+  memberships    Membership[]
+  auditLogs      AuditLog[]
+
+  @@map("users")
+}
+
+model Membership {
+  id        String   @id @default(cuid())
+  userId    String
+  companyId String
+  role      Role     @default(EMPLOYEE)
+  createdAt DateTime @default(now())
+
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, companyId])
+  @@map("memberships")
+}
+
+// ─────────────────────────────────────────────
+// OWNERS / PROPERTIES
+// ─────────────────────────────────────────────
+
+model Owner {
+  id            String        @id @default(cuid())
+  companyId     String
+  firstName     String
+  lastName      String
+  companyName   String?
+  siret         String?
+  address       String?
+  phone         String?
+  email         String?
+  vatRegime     VatRegime     @default(INHERIT_COMPANY)
+  vatRate       Decimal?      @db.Decimal(5, 2)
+  paymentMethod PaymentMethod @default(VIREMENT)
+  iban          String?
+  notes         String?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  company    Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  properties Property[]
+  invoices   Invoice[]
+  documents  Document[]
+
+  @@index([companyId])
+  @@map("owners")
+}
+
+model Property {
+  id               String         @id @default(cuid())
+  companyId        String
+  ownerId          String
+  name             String
+  address          String
+  city             String
+  postalCode       String
+  photos           String[]       @default([])
+  type             PropertyType
+  commissionMode   CommissionMode @default(FIXED_PERCENT)
+  commissionRate   Decimal?       @db.Decimal(5, 2)
+  commissionTiers  Json?
+  vatRateOverride  Decimal?       @db.Decimal(5, 2)
+  cleaningBilledTo BilledTo       @default(OWNER)
+  cleaningFlatRate Decimal?       @db.Decimal(10, 2)
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+
+  company       Company        @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  owner         Owner          @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  bookings      Booking[]
+  cleaningTasks CleaningTask[]
+  invoices      Invoice[]
+
+  @@index([companyId])
+  @@index([ownerId])
+  @@map("properties")
+}
+
+model Document {
+  id         String       @id @default(cuid())
+  ownerId    String?
+  type       DocumentType
+  storagePath String
+  uploadedAt DateTime     @default(now())
+
+  owner Owner? @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@map("documents")
+}
+
+// ─────────────────────────────────────────────
+// BOOKINGS (IMPORT)
+// ─────────────────────────────────────────────
+
+model Booking {
+  id                 String        @id @default(cuid())
+  companyId          String
+  propertyId         String
+  source             BookingSource
+  externalId         String
+  checkIn            DateTime
+  checkOut           DateTime
+  grossAmount        Decimal       @db.Decimal(10, 2)
+  netRent            Decimal       @db.Decimal(10, 2)
+  cleaningFee        Decimal       @default(0) @db.Decimal(10, 2)
+  touristTax         Decimal       @default(0) @db.Decimal(10, 2)
+  platformCommission Decimal       @default(0) @db.Decimal(10, 2)
+  rawImportPayload   Json?
+  status             BookingStatus @default(IMPORTED)
+  createdAt          DateTime      @default(now())
+
+  company  Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@unique([propertyId, source, externalId])
+  @@index([companyId])
+  @@map("bookings")
+}
+
+// ─────────────────────────────────────────────
+// CLEANING
+// ─────────────────────────────────────────────
+
+model CleaningTask {
+  id             String   @id @default(cuid())
+  companyId      String
+  propertyId     String
+  employeeId     String?
+  date           DateTime
+  durationMinutes Int
+  price          Decimal  @db.Decimal(10, 2)
+  billedTo       BilledTo @default(OWNER)
+  photosBefore   String[] @default([])
+  photosAfter    String[] @default([])
+  comments       String?
+  signatureUrl   String?
+  invoiceLineId  String?  @unique
+  createdAt      DateTime @default(now())
+
+  property    Property     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  invoiceLine InvoiceLine? @relation(fields: [invoiceLineId], references: [id])
+
+  @@index([companyId])
+  @@map("cleaning_tasks")
+}
+
+// ─────────────────────────────────────────────
+// INVOICING
+// ─────────────────────────────────────────────
+
+model Invoice {
+  id           String        @id @default(cuid())
+  companyId    String
+  ownerId      String
+  propertyId   String?
+  type         InvoiceType
+  number       String
+  issueDate    DateTime      @default(now())
+  dueDate      DateTime
+  status       InvoiceStatus @default(DRAFT)
+  subtotalHT   Decimal       @db.Decimal(10, 2)
+  vatAmount    Decimal       @db.Decimal(10, 2)
+  totalTTC     Decimal       @db.Decimal(10, 2)
+  pdfUrl       String?
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  company  Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  owner    Owner         @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  property Property?     @relation(fields: [propertyId], references: [id])
+  lines    InvoiceLine[]
+  payments Payment[]
+
+  @@unique([companyId, number])
+  @@index([companyId])
+  @@index([ownerId])
+  @@map("invoices")
+}
+
+model InvoiceLine {
+  id              String   @id @default(cuid())
+  invoiceId       String
+  description     String
+  quantity        Decimal  @default(1) @db.Decimal(10, 2)
+  unitPriceHT     Decimal  @db.Decimal(10, 2)
+  vatRate         Decimal  @db.Decimal(5, 2)
+  vatRateSource   String
+  lineTotalHT     Decimal  @db.Decimal(10, 2)
+  sourceBookingId String?
+
+  invoice      Invoice       @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  cleaningTask CleaningTask?
+
+  @@map("invoice_lines")
+}
+
+model Payment {
+  id                     String        @id @default(cuid())
+  invoiceId              String
+  amount                 Decimal       @db.Decimal(10, 2)
+  method                 PaymentMethod
+  paidAt                 DateTime?
+  status                 PaymentStatus @default(PENDING)
+  stripePaymentIntentId  String?
+  gocardlessPaymentId    String?
+  createdAt              DateTime      @default(now())
+
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  @@map("payments")
+}
+
+// ─────────────────────────────────────────────
+// AUDIT
+// ─────────────────────────────────────────────
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  companyId  String
+  userId     String?
+  action     String
+  entityType String
+  entityId   String
+  diff       Json?
+  createdAt  DateTime @default(now())
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user    User?   @relation(fields: [userId], references: [id])
+
+  @@index([companyId])
+  @@map("audit_logs")
+}
