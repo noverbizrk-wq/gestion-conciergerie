@@ -19,7 +19,9 @@ const NAV_ITEMS = [
  */
 export default async function PortalLayout({ children }: { children: React.ReactNode }) {
   const owner = await getPortalOwnerAction().catch(() => null);
-  if (!owner) redirect("/login");
+  // "/" est le dispatcher : un compte staff sans accès portail y sera renvoyé vers
+  // /dashboard, un visiteur non connecté vers /login (via le middleware).
+  if (!owner) redirect("/");
 
   return (
     <div className="min-h-screen bg-[var(--color-paper)]">
