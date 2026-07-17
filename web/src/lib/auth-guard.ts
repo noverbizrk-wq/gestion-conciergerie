@@ -94,6 +94,19 @@ export async function getCurrentEmployeeProfile(companyId: string) {
 }
 
 /**
+ * Variante sans companyId connu à l'avance : utilisée par le dispatcher post-
+ * connexion et par la page "Mes missions", car un intervenant pur (Employee lié
+ * sans Membership associé) n'a pas de société "courante" résolvable autrement.
+ */
+export async function getCurrentEmployeeProfileAnyCompany() {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+
+  return prisma.employee.findFirst({ where: { userId } });
+}
+
+/**
  * Résout l'accès "portail propriétaire" : un Owner peut être lié à un compte
  * User (Owner.userId) pour se connecter en lecture seule à ses logements,
  * réservations et factures. Volontairement indépendant du système de

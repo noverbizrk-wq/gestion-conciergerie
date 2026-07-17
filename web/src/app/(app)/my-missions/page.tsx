@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { getCurrentUserMembership } from "@/lib/auth-guard";
-import { getMyEmployeeProfileAction } from "@/modules/employees/actions";
+import { getCurrentEmployeeProfileAnyCompany } from "@/lib/auth-guard";
 import { listMissionsAction } from "@/modules/missions/actions";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -41,16 +40,7 @@ const STATUS_STYLES: Record<string, string> = {
  * les mêmes données que /missions mais filtrées sur l'intervenant connecté.
  */
 export default async function MyMissionsPage() {
-  const membership = await getCurrentUserMembership();
-  if (!membership) {
-    return (
-      <div className="rounded-lg border border-dashed border-[var(--color-line)] p-8 text-sm text-[var(--color-ink-soft)]">
-        Votre compte n&apos;est rattaché à aucune société pour le moment.
-      </div>
-    );
-  }
-
-  const employee = await getMyEmployeeProfileAction(membership.companyId);
+  const employee = await getCurrentEmployeeProfileAnyCompany();
 
   if (!employee) {
     return (
@@ -61,7 +51,7 @@ export default async function MyMissionsPage() {
     );
   }
 
-  const missions = await listMissionsAction(membership.companyId, { employeeId: employee.id });
+  const missions = await listMissionsAction(employee.companyId, { employeeId: employee.id });
   const active = missions.filter((m) => !["VALIDATED", "CANCELLED", "REFUSED"].includes(m.status));
   const done = missions.filter((m) => ["VALIDATED", "CANCELLED", "REFUSED"].includes(m.status));
 
