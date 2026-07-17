@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Users, Home, FileText, Upload, Sparkles, CalendarDays } from "lucide-react";
+import { LayoutDashboard, Users, Home, FileText, Upload, Sparkles, CalendarDays, Wallet } from "lucide-react";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { SignOutButton } from "@/components/sign-out-button";
 
@@ -10,6 +10,7 @@ const NAV_ITEMS = [
   { href: "/properties", label: "Logements", icon: Home },
   { href: "/bookings", label: "Réservations", icon: Upload },
   { href: "/invoices", label: "Factures", icon: FileText },
+  { href: "/payments", label: "Encaissements", icon: Wallet },
   { href: "/assistant", label: "Assistant IA", icon: Sparkles },
 ];
 
