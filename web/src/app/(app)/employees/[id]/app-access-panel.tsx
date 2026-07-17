@@ -26,9 +26,7 @@ export function AppAccessPanel({
         Accès &quot;Mes missions&quot;
       </h2>
 
-      {hasAccess ? (
-        <p className="text-sm text-[var(--color-success)]">Accès mobile actif.</p>
-      ) : credentials ? (
+      {credentials ? (
         <div className="rounded-lg bg-[var(--color-paper)] p-3 text-xs space-y-1">
           <p className="text-[var(--color-ink-soft)]">Identifiants à transmettre à l&apos;intervenant :</p>
           <p className="font-mono">{credentials.email}</p>
@@ -37,7 +35,10 @@ export function AppAccessPanel({
           ) : (
             <p className="text-[var(--color-ink-soft)]">(compte existant réutilisé, mot de passe inchangé)</p>
           )}
+          <p className="text-[var(--color-ink-soft)] pt-1">Note ce mot de passe : il ne sera plus affiché ensuite.</p>
         </div>
+      ) : hasAccess ? (
+        <p className="text-sm text-[var(--color-success)]">Accès mobile actif.</p>
       ) : (
         <>
           <p className="text-sm text-[var(--color-ink-soft)] mb-3">
