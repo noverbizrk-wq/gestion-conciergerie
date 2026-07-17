@@ -96,6 +96,29 @@ enum MissionPhotoPhase {
   AFTER
 }
 
+enum IncidentCategory {
+  CASSE
+  FUITE
+  ELECTRICITE
+  PLOMBERIE
+  SERRURERIE
+  ELECTROMENAGER
+  PROPRETE
+  NUISIBLES
+  CHAUFFAGE
+  INTERNET
+  VOISINAGE
+  DEGRADATION_VOYAGEUR
+  AUTRE
+}
+
+enum IncidentStatus {
+  OPEN
+  IN_PROGRESS
+  RESOLVED
+  CLOSED
+}
+
 enum PaymentMethod {
   VIREMENT
   CB
@@ -307,6 +330,7 @@ model Property {
   reviews       Review[]
   accessCodes   PropertyAccessCode[]
   missions      Mission[]
+  incidents     Incident[]
 
   @@index([companyId])
   @@index([ownerId])
@@ -373,7 +397,8 @@ model Booking {
 
   company  Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
   property Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
-  missions Mission[]
+  missions  Mission[]
+  incidents Incident[]
 
   @@unique([propertyId, source, externalId])
   @@index([companyId])
@@ -609,6 +634,7 @@ model Employee {
   documents      EmployeeDocument[]
   availabilities EmployeeAvailability[]
   missions       Mission[]
+  incidentsResponsible Incident[]
 
   @@index([companyId])
   @@map("employees")
@@ -652,6 +678,7 @@ model Mission {
   propertyId              String
   bookingId               String?
   employeeId              String?
+  incidentId              String?
   type                    MissionType
   status                  MissionStatus    @default(TO_PLAN)
   priority                MissionPriority  @default(NORMAL)
@@ -672,6 +699,7 @@ model Mission {
   property Property     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
   booking  Booking?     @relation(fields: [bookingId], references: [id])
   employee Employee?    @relation(fields: [employeeId], references: [id])
+  incident Incident?    @relation(fields: [incidentId], references: [id])
   tasks    MissionTask[]
   photos   MissionPhoto[]
 
@@ -713,4 +741,36 @@ model MissionPhoto {
 
   @@index([missionId])
   @@map("mission_photos")
+}
+
+// ─────────────────────────────────────────────
+// INCIDENTS & MAINTENANCE
+// ─────────────────────────────────────────────
+
+model Incident {
+  id                  String           @id @default(cuid())
+  companyId           String
+  propertyId          String
+  bookingId           String?
+  category            IncidentCategory
+  description         String
+  photos              String[]         @default([])
+  priority             MissionPriority  @default(NORMAL)
+  responsibleEmployeeId String?
+  providerName        String?
+  estimatedCost       Decimal?         @db.Decimal(10, 2)
+  actualCost          Decimal?         @db.Decimal(10, 2)
+  status              IncidentStatus   @default(OPEN)
+  resolvedAt          DateTime?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+
+  property             Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  booking              Booking?  @relation(fields: [bookingId], references: [id])
+  responsibleEmployee  Employee? @relation(fields: [responsibleEmployeeId], references: [id])
+  missions             Mission[]
+
+  @@index([companyId])
+  @@index([propertyId])
+  @@map("incidents")
 }
