@@ -86,6 +86,33 @@ async function main() {
     ],
   });
 
+  await prisma.employee.createMany({
+    data: [
+      {
+        companyId: company.id,
+        firstName: "Sofiane",
+        lastName: "Belkacem",
+        email: "sofiane.belkacem@example.com",
+        phone: "0601020304",
+        type: "SALARIE",
+        skills: ["Ménage", "Blanchisserie"],
+        zone: "Nanterre / Puteaux",
+        hourlyRate: 14,
+      },
+      {
+        companyId: company.id,
+        firstName: "Fatou",
+        lastName: "Diop",
+        email: "fatou.diop@example.com",
+        phone: "0605060708",
+        type: "PRESTATAIRE",
+        skills: ["Ménage", "Contrôle qualité"],
+        zone: "Courbevoie / La Défense",
+        perMissionRate: 35,
+      },
+    ],
+  });
+
   const passwordHash = await bcrypt.hash(ADMIN_PASSWORD, 10);
   const adminUser = await prisma.user.create({
     data: {

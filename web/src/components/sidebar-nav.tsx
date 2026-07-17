@@ -16,6 +16,7 @@ import {
   Star,
   Clock,
   UsersRound,
+  UserCheck,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -23,6 +24,7 @@ const NAV_ITEMS = [
   { href: "/planning", label: "Planning", icon: CalendarDays },
   { href: "/owners", label: "Propriétaires", icon: Users },
   { href: "/properties", label: "Logements", icon: Home },
+  { href: "/employees", label: "Intervenants", icon: UserCheck },
   { href: "/bookings", label: "Réservations", icon: Upload },
   { href: "/quotes", label: "Devis", icon: FileSignature },
   { href: "/invoices", label: "Factures", icon: FileText },

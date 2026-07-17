@@ -21,6 +21,31 @@ enum Role {
   ACCOUNTANT
   EMPLOYEE
   READONLY
+  SUPER_ADMIN
+  OPERATIONAL_MANAGER
+  AGENT
+}
+
+enum EmployeeType {
+  SALARIE
+  PRESTATAIRE
+}
+
+enum EmployeeDocumentType {
+  CONTRAT
+  ASSURANCE
+  PIECE_IDENTITE
+  CARTE_VITALE
+  AUTRE
+}
+
+enum AccessCodeType {
+  PORTE
+  BOITE_A_CLES
+  SERRURE_CONNECTEE
+  PARKING
+  WIFI
+  AUTRE
 }
 
 enum PaymentMethod {
@@ -141,6 +166,7 @@ model Company {
   bookings      Booking[]
   reviews       Review[]
   hourPackages  HourPackage[]
+  employees     Employee[]
 
   @@map("companies")
 }
@@ -153,6 +179,7 @@ model User {
   createdAt    DateTime     @default(now())
   memberships  Membership[]
   auditLogs    AuditLog[]
+  employee     Employee?
 
   @@map("users")
 }
@@ -230,10 +257,31 @@ model Property {
   invoices      Invoice[]
   quotations    Quotation[]
   reviews       Review[]
+  accessCodes   PropertyAccessCode[]
 
   @@index([companyId])
   @@index([ownerId])
   @@map("properties")
+}
+
+// ─────────────────────────────────────────────
+// CODES D'ACCÈS LOGEMENT (chiffrés)
+// ─────────────────────────────────────────────
+
+model PropertyAccessCode {
+  id           String         @id @default(cuid())
+  propertyId   String
+  type         AccessCodeType
+  label        String?
+  // Valeur chiffrée (AES-256-GCM, voir src/lib/crypto.ts) — jamais en clair en base.
+  encryptedValue String
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([propertyId])
+  @@map("property_access_codes")
 }
 
 model Document {
@@ -267,6 +315,11 @@ model Booking {
   platformCommission Decimal       @default(0) @db.Decimal(10, 2)
   rawImportPayload   Json?
   status             BookingStatus @default(IMPORTED)
+  guestName          String?
+  guestEmail         String?
+  guestPhone         String?
+  guestCount         Int?
+  specialRequests    String?
   createdAt          DateTime      @default(now())
 
   company  Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
@@ -475,4 +528,64 @@ model HourPackage {
 
   @@index([companyId])
   @@map("hour_packages")
+}
+
+
+// ─────────────────────────────────────────────
+// INTERVENANTS (EMPLOYÉS / PRESTATAIRES)
+// ─────────────────────────────────────────────
+
+model Employee {
+  id              String       @id @default(cuid())
+  companyId       String
+  userId          String?      @unique
+  firstName       String
+  lastName        String
+  email           String?
+  phone           String?
+  photoUrl        String?
+  type            EmployeeType @default(SALARIE)
+  skills          String[]     @default([])
+  zone            String?
+  hourlyRate      Decimal?     @db.Decimal(10, 2)
+  perMissionRate  Decimal?     @db.Decimal(10, 2)
+  active          Boolean      @default(true)
+  notes           String?
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  company        Company                @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user           User?                  @relation(fields: [userId], references: [id])
+  documents      EmployeeDocument[]
+  availabilities EmployeeAvailability[]
+
+  @@index([companyId])
+  @@map("employees")
+}
+
+model EmployeeDocument {
+  id         String               @id @default(cuid())
+  employeeId String
+  type       EmployeeDocumentType
+  storagePath String
+  expiresAt  DateTime?
+  uploadedAt DateTime             @default(now())
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("employee_documents")
+}
+
+model EmployeeAvailability {
+  id         String   @id @default(cuid())
+  employeeId String
+  weekday    Int // 0 = dimanche ... 6 = samedi
+  startTime  String // "09:00"
+  endTime    String // "18:00"
+
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+
+  @@index([employeeId])
+  @@map("employee_availabilities")
 }

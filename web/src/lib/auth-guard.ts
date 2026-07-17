@@ -1,7 +1,14 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 
-export type AppRole = "ADMIN" | "ACCOUNTANT" | "EMPLOYEE" | "READONLY";
+export type AppRole =
+  | "ADMIN"
+  | "ACCOUNTANT"
+  | "EMPLOYEE"
+  | "READONLY"
+  | "SUPER_ADMIN"
+  | "OPERATIONAL_MANAGER"
+  | "AGENT";
 
 export class UnauthorizedError extends Error {
   constructor(message = "Accès non autorisé") {
