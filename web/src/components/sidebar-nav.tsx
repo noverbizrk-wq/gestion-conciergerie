@@ -15,6 +15,7 @@ import {
   Settings,
   Star,
   Clock,
+  UsersRound,
 } from "lucide-react";
 
 const NAV_ITEMS = [
@@ -29,6 +30,7 @@ const NAV_ITEMS = [
   { href: "/reviews", label: "Avis clients", icon: Star },
   { href: "/hour-packages", label: "Packs d'heures", icon: Clock },
   { href: "/assistant", label: "Assistant IA", icon: Sparkles },
+  { href: "/team", label: "Équipe", icon: UsersRound },
   { href: "/settings", label: "Paramètres & Services", icon: Settings },
 ];
 

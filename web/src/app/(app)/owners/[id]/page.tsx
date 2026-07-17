@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { getOwnerAction } from "@/modules/owners/actions";
 import { OwnerEditForm } from "./edit-form";
+import { DocumentsPanel } from "./documents-panel";
 
 export default async function OwnerDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -45,26 +46,39 @@ export default async function OwnerDetailPage({ params }: { params: Promise<{ id
           />
         </div>
 
-        <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
-          <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-3">
-            Logements ({owner.properties.length})
-          </h2>
-          {owner.properties.length === 0 ? (
-            <p className="text-sm text-[var(--color-ink-soft)]">Aucun logement rattaché.</p>
-          ) : (
-            <ul className="space-y-2">
-              {owner.properties.map((property) => (
-                <li key={property.id}>
-                  <Link
-                    href={`/properties/${property.id}`}
-                    className="text-sm text-[var(--color-brass-dark)] hover:underline"
-                  >
-                    {property.name}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          )}
+        <div className="flex flex-col gap-6">
+          <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
+            <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-3">
+              Logements ({owner.properties.length})
+            </h2>
+            {owner.properties.length === 0 ? (
+              <p className="text-sm text-[var(--color-ink-soft)]">Aucun logement rattaché.</p>
+            ) : (
+              <ul className="space-y-2">
+                {owner.properties.map((property) => (
+                  <li key={property.id}>
+                    <Link
+                      href={`/properties/${property.id}`}
+                      className="text-sm text-[var(--color-brass-dark)] hover:underline"
+                    >
+                      {property.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <DocumentsPanel
+            ownerId={owner.id}
+            companyId={membership.companyId}
+            documents={owner.documents.map((doc) => ({
+              id: doc.id,
+              type: doc.type,
+              storagePath: doc.storagePath,
+              uploadedAt: doc.uploadedAt.toISOString(),
+            }))}
+          />
         </div>
       </div>
     </div>
