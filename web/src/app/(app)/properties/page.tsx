@@ -1,5 +1,7 @@
 import { listPropertiesAction } from "@/modules/properties/actions";
+import { listOwnersAction } from "@/modules/owners/actions";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
+import { PropertiesToolbar } from "./properties-toolbar";
 
 const TYPE_LABELS: Record<string, string> = {
   STUDIO: "Studio",
@@ -12,23 +14,20 @@ const TYPE_LABELS: Record<string, string> = {
 
 export default async function PropertiesPage() {
   const membership = await getCurrentUserMembership();
-  const properties = membership ? await listPropertiesAction(membership.companyId) : [];
+  const [properties, owners] = membership
+    ? await Promise.all([
+        listPropertiesAction(membership.companyId),
+        listOwnersAction(membership.companyId),
+      ])
+    : [[], []];
 
   return (
     <div>
-      <header className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
-            Logements
-          </h1>
-          <p className="text-sm text-[var(--color-ink-soft)] mt-1">
-            {properties.length} logement{properties.length > 1 ? "s" : ""} géré{properties.length > 1 ? "s" : ""}
-          </p>
-        </div>
-        <button className="rounded-md bg-[var(--color-ink)] text-white text-sm px-4 py-2 hover:bg-[var(--color-brass-dark)] transition-colors">
-          Ajouter un logement
-        </button>
-      </header>
+      <PropertiesToolbar
+        companyId={membership?.companyId ?? ""}
+        count={properties.length}
+        owners={owners.map((o) => ({ id: o.id, firstName: o.firstName, lastName: o.lastName }))}
+      />
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {properties.length === 0 ? (

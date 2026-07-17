@@ -20,13 +20,21 @@ export default async function BookingsPage() {
 
   return (
     <div>
-      <header className="mb-6">
-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
-          Réservations
-        </h1>
-        <p className="text-sm text-[var(--color-ink-soft)] mt-1">
-          {bookings.length} réservation{bookings.length > 1 ? "s" : ""} importée{bookings.length > 1 ? "s" : ""}
-        </p>
+      <header className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+            Réservations
+          </h1>
+          <p className="text-sm text-[var(--color-ink-soft)] mt-1">
+            {bookings.length} réservation{bookings.length > 1 ? "s" : ""} importée{bookings.length > 1 ? "s" : ""}
+          </p>
+        </div>
+        <Link
+          href="/bookings/import"
+          className="rounded-md bg-[var(--color-brass)] text-white text-sm px-4 py-2 hover:bg-[var(--color-brass-dark)] transition-colors"
+        >
+          Importer un CSV
+        </Link>
       </header>
 
       <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">

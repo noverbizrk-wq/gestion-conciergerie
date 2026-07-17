@@ -1,5 +1,6 @@
 import { listOwnersAction } from "@/modules/owners/actions";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
+import { OwnersToolbar } from "./owners-toolbar";
 
 export default async function OwnersPage() {
   const membership = await getCurrentUserMembership();
@@ -7,19 +8,7 @@ export default async function OwnersPage() {
 
   return (
     <div>
-      <header className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
-            Propriétaires
-          </h1>
-          <p className="text-sm text-[var(--color-ink-soft)] mt-1">
-            {owners.length} propriétaire{owners.length > 1 ? "s" : ""} enregistré{owners.length > 1 ? "s" : ""}
-          </p>
-        </div>
-        <button className="rounded-md bg-[var(--color-ink)] text-white text-sm px-4 py-2 hover:bg-[var(--color-brass-dark)] transition-colors">
-          Ajouter un propriétaire
-        </button>
-      </header>
+      <OwnersToolbar companyId={membership?.companyId ?? ""} count={owners.length} />
 
       <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
         <table className="w-full text-sm">
