@@ -138,6 +138,38 @@ export async function inviteEmployeeToAppAction(employeeId: string, companyId: s
   return { email, tempPassword };
 }
 
+/**
+ * Régénère un mot de passe temporaire pour un intervenant ayant déjà accès
+ * à "Mes missions" (compte perdu, mot de passe non transmis, etc.). Ne touche
+ * ni au lien Employee.userId ni au Membership existants.
+ */
+export async function resetEmployeeAppPasswordAction(employeeId: string, companyId: string) {
+  const auth = await requireRole(companyId, [...MANAGE_ROLES]);
+
+  const employee = await prisma.employee.findFirst({ where: { id: employeeId, companyId } });
+  if (!employee) throw new Error("Intervenant introuvable");
+  if (!employee.userId) throw new Error("Cet intervenant n'a pas encore d'accès.");
+
+  const user = await prisma.user.findUnique({ where: { id: employee.userId } });
+  if (!user) throw new Error("Compte utilisateur introuvable.");
+
+  const tempPassword = crypto.randomBytes(9).toString("base64url");
+  const passwordHash = await bcrypt.hash(tempPassword, 10);
+  await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+
+  await writeAuditLog({
+    companyId: auth.companyId,
+    userId: auth.userId,
+    action: "EMPLOYEE_APP_PASSWORD_RESET",
+    entityType: "Employee",
+    entityId: employeeId,
+    diff: { email: user.email },
+  });
+
+  revalidatePath(`/employees/${employeeId}`);
+  return { email: user.email, tempPassword };
+}
+
 export async function deleteEmployeeAction(id: string, companyId: string) {
   const auth = await requireRole(companyId, ["ADMIN", "SUPER_ADMIN"]);
   await employeesRepository.delete(id, companyId);

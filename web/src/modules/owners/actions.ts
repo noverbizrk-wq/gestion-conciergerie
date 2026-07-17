@@ -106,6 +106,38 @@ export async function inviteOwnerToPortalAction(ownerId: string, companyId: stri
   return { email, tempPassword };
 }
 
+/**
+ * Régénère un mot de passe temporaire pour un propriétaire ayant déjà accès
+ * au portail (compte perdu, mot de passe non transmis, etc.). Ne change rien
+ * au lien Owner.userId existant, se contente d'écraser le hash du compte lié.
+ */
+export async function resetOwnerPortalPasswordAction(ownerId: string, companyId: string) {
+  const auth = await requireRole(companyId, ["ADMIN"]);
+
+  const owner = await prisma.owner.findFirst({ where: { id: ownerId, companyId } });
+  if (!owner) throw new Error("Propriétaire introuvable");
+  if (!owner.userId) throw new Error("Ce propriétaire n'a pas encore d'accès au portail.");
+
+  const user = await prisma.user.findUnique({ where: { id: owner.userId } });
+  if (!user) throw new Error("Compte utilisateur introuvable.");
+
+  const tempPassword = crypto.randomBytes(9).toString("base64url");
+  const passwordHash = await bcrypt.hash(tempPassword, 10);
+  await prisma.user.update({ where: { id: user.id }, data: { passwordHash } });
+
+  await writeAuditLog({
+    companyId: auth.companyId,
+    userId: auth.userId,
+    action: "OWNER_PORTAL_PASSWORD_RESET",
+    entityType: "Owner",
+    entityId: ownerId,
+    diff: { email: user.email },
+  });
+
+  revalidatePath(`/owners/${ownerId}`);
+  return { email: user.email, tempPassword };
+}
+
 export async function deleteOwnerAction(id: string, companyId: string) {
   const auth = await requireRole(companyId, ["ADMIN"]);
   await ownersRepository.delete(id, companyId);
