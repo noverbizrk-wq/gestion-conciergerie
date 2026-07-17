@@ -2,14 +2,42 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import type { LucideIcon } from "lucide-react";
+import {
+  LayoutDashboard,
+  Users,
+  Home,
+  FileText,
+  FileSignature,
+  Upload,
+  Sparkles,
+  CalendarDays,
+  Wallet,
+  Settings,
+  Star,
+  Clock,
+} from "lucide-react";
 
-export function SidebarNav({ items }: { items: { href: string; label: string; icon: LucideIcon }[] }) {
+const NAV_ITEMS = [
+  { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
+  { href: "/planning", label: "Planning", icon: CalendarDays },
+  { href: "/owners", label: "Propriétaires", icon: Users },
+  { href: "/properties", label: "Logements", icon: Home },
+  { href: "/bookings", label: "Réservations", icon: Upload },
+  { href: "/quotes", label: "Devis", icon: FileSignature },
+  { href: "/invoices", label: "Factures", icon: FileText },
+  { href: "/payments", label: "Encaissements", icon: Wallet },
+  { href: "/reviews", label: "Avis clients", icon: Star },
+  { href: "/hour-packages", label: "Packs d'heures", icon: Clock },
+  { href: "/assistant", label: "Assistant IA", icon: Sparkles },
+  { href: "/settings", label: "Paramètres & Services", icon: Settings },
+];
+
+export function SidebarNav() {
   const pathname = usePathname();
 
   return (
     <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-      {items.map(({ href, label, icon: Icon }) => {
+      {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
         const isActive = pathname === href || pathname.startsWith(`${href}/`);
         return (
           <Link

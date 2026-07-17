@@ -1,24 +1,8 @@
 import Link from "next/link";
-import { LayoutDashboard, Users, Home, FileText, FileSignature, Upload, Sparkles, CalendarDays, Wallet, Settings, Star, Clock } from "lucide-react";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { SignOutButton } from "@/components/sign-out-button";
 import { SidebarNav } from "@/components/sidebar-nav";
 import { ThemeToggle } from "@/components/theme-toggle";
-
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
-  { href: "/planning", label: "Planning", icon: CalendarDays },
-  { href: "/owners", label: "Propriétaires", icon: Users },
-  { href: "/properties", label: "Logements", icon: Home },
-  { href: "/bookings", label: "Réservations", icon: Upload },
-  { href: "/quotes", label: "Devis", icon: FileSignature },
-  { href: "/invoices", label: "Factures", icon: FileText },
-  { href: "/payments", label: "Encaissements", icon: Wallet },
-  { href: "/reviews", label: "Avis clients", icon: Star },
-  { href: "/hour-packages", label: "Packs d'heures", icon: Clock },
-  { href: "/assistant", label: "Assistant IA", icon: Sparkles },
-  { href: "/settings", label: "Paramètres & Services", icon: Settings },
-];
 
 const ROLE_LABELS: Record<string, string> = {
   ADMIN: "Administrateur",
@@ -42,7 +26,7 @@ export async function Sidebar() {
         <ThemeToggle />
       </div>
 
-      <SidebarNav items={NAV_ITEMS} />
+      <SidebarNav />
 
       {membership ? (
         <div className="px-4 py-4 border-t border-[var(--color-line)]">
