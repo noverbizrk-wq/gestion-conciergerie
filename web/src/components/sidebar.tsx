@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Users, Home, FileText, Upload, Sparkles, CalendarDays, Wallet } from "lucide-react";
+import { LayoutDashboard, Users, Home, FileText, FileSignature, Upload, Sparkles, CalendarDays, Wallet, Settings } from "lucide-react";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { SignOutButton } from "@/components/sign-out-button";
 
@@ -9,9 +9,11 @@ const NAV_ITEMS = [
   { href: "/owners", label: "Propriétaires", icon: Users },
   { href: "/properties", label: "Logements", icon: Home },
   { href: "/bookings", label: "Réservations", icon: Upload },
+  { href: "/quotes", label: "Devis", icon: FileSignature },
   { href: "/invoices", label: "Factures", icon: FileText },
   { href: "/payments", label: "Encaissements", icon: Wallet },
   { href: "/assistant", label: "Assistant IA", icon: Sparkles },
+  { href: "/settings", label: "Paramètres & Services", icon: Settings },
 ];
 
 const ROLE_LABELS: Record<string, string> = {
