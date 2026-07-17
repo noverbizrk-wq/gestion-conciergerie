@@ -52,6 +52,8 @@ export default async function MissionDetailPage({ params }: { params: Promise<{ 
         <MissionPanel
           missionId={mission.id}
           companyId={membership.companyId}
+          propertyId={mission.propertyId}
+          bookingId={mission.bookingId}
           status={mission.status}
           employeeId={mission.employeeId}
           employees={employees.map((e) => ({ id: e.id, firstName: e.firstName, lastName: e.lastName }))}

@@ -8,6 +8,23 @@ import {
   toggleMissionTaskAction,
   addMissionPhotoAction,
 } from "@/modules/missions/actions";
+import { createIncidentAction } from "@/modules/incidents/actions";
+
+const INCIDENT_CATEGORY_LABELS: Record<string, string> = {
+  CASSE: "Casse",
+  FUITE: "Fuite",
+  ELECTRICITE: "Électricité",
+  PLOMBERIE: "Plomberie",
+  SERRURERIE: "Serrurerie",
+  ELECTROMENAGER: "Électroménager",
+  PROPRETE: "Propreté",
+  NUISIBLES: "Nuisibles",
+  CHAUFFAGE: "Chauffage",
+  INTERNET: "Internet",
+  VOISINAGE: "Voisinage",
+  DEGRADATION_VOYAGEUR: "Dégradation voyageur",
+  AUTRE: "Autre",
+};
 
 const STATUS_LABELS: Record<string, string> = {
   TO_PLAN: "À planifier",
@@ -49,6 +66,8 @@ type Photo = { id: string; phase: string; room: string | null; storagePath: stri
 export function MissionPanel({
   missionId,
   companyId,
+  propertyId,
+  bookingId,
   status,
   employeeId,
   employees,
@@ -58,6 +77,8 @@ export function MissionPanel({
 }: {
   missionId: string;
   companyId: string;
+  propertyId: string;
+  bookingId?: string | null;
   status: string;
   employeeId: string | null;
   employees: { id: string; firstName: string; lastName: string }[];
@@ -70,6 +91,10 @@ export function MissionPanel({
   const [phase, setPhase] = useState<"BEFORE" | "AFTER">("BEFORE");
   const [room, setRoom] = useState("");
   const [photoUrl, setPhotoUrl] = useState("");
+  const [incidentOpen, setIncidentOpen] = useState(false);
+  const [incidentCategory, setIncidentCategory] = useState("AUTRE");
+  const [incidentDescription, setIncidentDescription] = useState("");
+  const [incidentReported, setIncidentReported] = useState(false);
   const router = useRouter();
 
   return (
@@ -227,6 +252,75 @@ export function MissionPanel({
         >
           Ajouter la photo
         </button>
+      </div>
+
+      <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
+        <div className="flex items-center justify-between mb-3">
+          <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)]">
+            Signaler un problème
+          </h2>
+          {!incidentOpen ? (
+            <button
+              type="button"
+              onClick={() => setIncidentOpen(true)}
+              className="text-xs text-[var(--color-danger)] hover:underline"
+            >
+              + Signaler
+            </button>
+          ) : null}
+        </div>
+        {incidentReported ? (
+          <p className="text-sm text-[var(--color-success)]">Incident signalé, un responsable va le traiter.</p>
+        ) : incidentOpen ? (
+          <div className="space-y-2">
+            <select
+              value={incidentCategory}
+              onChange={(e) => setIncidentCategory(e.target.value)}
+              className="w-full rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+            >
+              {Object.entries(INCIDENT_CATEGORY_LABELS).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+            <textarea
+              placeholder="Décrivez le problème rencontré"
+              value={incidentDescription}
+              onChange={(e) => setIncidentDescription(e.target.value)}
+              rows={3}
+              className="w-full rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+            />
+            <button
+              type="button"
+              disabled={isPending || !incidentDescription}
+              onClick={() => {
+                startTransition(async () => {
+                  try {
+                    await createIncidentAction({
+                      companyId,
+                      propertyId,
+                      bookingId: bookingId ?? undefined,
+                      category: incidentCategory,
+                      description: incidentDescription,
+                    });
+                    setIncidentReported(true);
+                    setIncidentOpen(false);
+                  } catch (err) {
+                    setError(err instanceof Error ? err.message : "Erreur");
+                  }
+                });
+              }}
+              className="rounded-lg bg-[var(--color-danger)] text-white text-xs font-medium px-3 py-1.5 hover:opacity-90 transition-all disabled:opacity-50"
+            >
+              Envoyer le signalement
+            </button>
+          </div>
+        ) : (
+          <p className="text-sm text-[var(--color-ink-soft)]">
+            Casse, fuite, dégradation... signale tout problème constaté sur place.
+          </p>
+        )}
       </div>
     </div>
   );

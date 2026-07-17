@@ -4,6 +4,7 @@ import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { getOwnerAction } from "@/modules/owners/actions";
 import { OwnerEditForm } from "./edit-form";
 import { DocumentsPanel } from "./documents-panel";
+import { PortalAccessPanel } from "./portal-access-panel";
 
 export default async function OwnerDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -78,6 +79,13 @@ export default async function OwnerDetailPage({ params }: { params: Promise<{ id
               storagePath: doc.storagePath,
               uploadedAt: doc.uploadedAt.toISOString(),
             }))}
+          />
+
+          <PortalAccessPanel
+            ownerId={owner.id}
+            companyId={membership.companyId}
+            hasAccess={Boolean(owner.userId)}
+            email={owner.email}
           />
         </div>
       </div>

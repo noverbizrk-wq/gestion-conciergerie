@@ -78,3 +78,39 @@ export async function getCurrentUserMembership() {
 
   return membership;
 }
+
+/**
+ * Résout le profil intervenant (Employee) lié au compte connecté, pour la vue
+ * "Mes missions" (interface mobile intervenant). Un même User peut avoir un
+ * Membership (accès back-office) ET/OU un Employee lié (missions terrain) —
+ * les deux sont indépendants.
+ */
+export async function getCurrentEmployeeProfile(companyId: string) {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) return null;
+
+  return prisma.employee.findFirst({ where: { userId, companyId } });
+}
+
+/**
+ * Résout l'accès "portail propriétaire" : un Owner peut être lié à un compte
+ * User (Owner.userId) pour se connecter en lecture seule à ses logements,
+ * réservations et factures. Volontairement indépendant du système de
+ * Membership/rôles back-office — un propriétaire n'a jamais accès aux données
+ * des autres propriétaires ni aux fonctions d'administration.
+ */
+export async function requireOwnerSession() {
+  const session = await auth();
+  const userId = session?.user?.id;
+  if (!userId) {
+    throw new UnauthorizedError("Session invalide ou expirée");
+  }
+
+  const owner = await prisma.owner.findFirst({ where: { userId } });
+  if (!owner) {
+    throw new UnauthorizedError("Aucun accès propriétaire pour ce compte");
+  }
+
+  return owner;
+}

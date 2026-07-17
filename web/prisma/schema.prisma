@@ -251,6 +251,7 @@ model User {
   memberships  Membership[]
   auditLogs    AuditLog[]
   employee     Employee?
+  ownerProfile Owner?
 
   @@map("users")
 }
@@ -276,6 +277,7 @@ model Membership {
 model Owner {
   id            String        @id @default(cuid())
   companyId     String
+  userId        String?       @unique
   firstName     String
   lastName      String
   companyName   String?
@@ -292,6 +294,7 @@ model Owner {
   updatedAt     DateTime      @updatedAt
 
   company      Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  user         User?         @relation(fields: [userId], references: [id])
   properties   Property[]
   invoices     Invoice[]
   quotations   Quotation[]

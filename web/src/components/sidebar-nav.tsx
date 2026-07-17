@@ -19,12 +19,14 @@ import {
   UserCheck,
   ClipboardCheck,
   AlertTriangle,
+  ListChecks,
 } from "lucide-react";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
   { href: "/planning", label: "Planning", icon: CalendarDays },
   { href: "/missions", label: "Missions", icon: ClipboardCheck },
+  { href: "/my-missions", label: "Mes missions", icon: ListChecks },
   { href: "/incidents", label: "Incidents", icon: AlertTriangle },
   { href: "/owners", label: "Propriétaires", icon: Users },
   { href: "/properties", label: "Logements", icon: Home },

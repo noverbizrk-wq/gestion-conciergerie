@@ -1,6 +1,6 @@
 "use server";
 
-import { requireRole } from "@/lib/auth-guard";
+import { requireRole, getCurrentEmployeeProfile } from "@/lib/auth-guard";
 import { writeAuditLog } from "@/lib/audit-log";
 import { createEmployeeSchema, updateEmployeeSchema } from "./dto";
 import { employeesRepository } from "./repository";
@@ -71,6 +71,10 @@ export async function setEmployeeActiveAction(id: string, companyId: string, act
   });
 
   revalidatePath("/employees");
+}
+
+export async function getMyEmployeeProfileAction(companyId: string) {
+  return getCurrentEmployeeProfile(companyId);
 }
 
 export async function deleteEmployeeAction(id: string, companyId: string) {
