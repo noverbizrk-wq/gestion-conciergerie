@@ -3,9 +3,9 @@ import { listBookingsAction } from "@/modules/bookings-import/actions";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 
 const STATUS_STYLES: Record<string, string> = {
-  IMPORTED: "bg-blue-50 text-blue-700",
+  IMPORTED: "bg-[var(--color-brass)]/10 text-[var(--color-brass-dark)]",
   INVOICED: "bg-[var(--color-success)]/10 text-[var(--color-success)]",
-  IGNORED: "bg-slate-100 text-slate-500",
+  IGNORED: "bg-[var(--color-ink)]/5 text-[var(--color-ink-soft)]",
 };
 
 const STATUS_LABELS: Record<string, string> = {

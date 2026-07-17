@@ -3,12 +3,12 @@ import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { listQuotationsAction } from "@/modules/quotations/actions";
 
 const STATUS_STYLES: Record<string, string> = {
-  PROPOSED: "bg-blue-50 text-blue-700",
-  EXPIRED: "bg-slate-100 text-slate-500",
+  PROPOSED: "bg-[var(--color-brass)]/10 text-[var(--color-brass-dark)]",
+  EXPIRED: "bg-[var(--color-ink)]/5 text-[var(--color-ink-soft)]",
   REFUSED: "bg-[var(--color-danger)]/10 text-[var(--color-danger)]",
   ACCEPTED: "bg-[var(--color-success)]/10 text-[var(--color-success)]",
   INVOICED: "bg-[var(--color-brass)]/10 text-[var(--color-brass-dark)]",
-  ARCHIVED: "bg-slate-100 text-slate-400",
+  ARCHIVED: "bg-[var(--color-ink)]/5 text-[var(--color-ink-soft)]",
 };
 
 const STATUS_LABELS: Record<string, string> = {

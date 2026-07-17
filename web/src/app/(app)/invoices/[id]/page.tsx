@@ -5,11 +5,11 @@ import { getInvoiceAction } from "@/modules/invoicing/actions";
 import { ValidateInvoiceButton } from "./validate-button";
 
 const STATUS_STYLES: Record<string, string> = {
-  DRAFT: "bg-slate-100 text-slate-600",
-  SENT: "bg-blue-50 text-blue-700",
+  DRAFT: "bg-[var(--color-ink)]/5 text-[var(--color-ink-soft)]",
+  SENT: "bg-[var(--color-brass)]/10 text-[var(--color-brass-dark)]",
   PAID: "bg-[var(--color-success)]/10 text-[var(--color-success)]",
   OVERDUE: "bg-[var(--color-danger)]/10 text-[var(--color-danger)]",
-  REFUNDED: "bg-slate-100 text-slate-500",
+  REFUNDED: "bg-[var(--color-ink)]/5 text-[var(--color-ink-soft)]",
 };
 
 const STATUS_LABELS: Record<string, string> = {

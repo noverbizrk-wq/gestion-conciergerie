@@ -12,7 +12,7 @@ const STATUS_LABELS: Record<string, string> = {
 
 const STATUS_STYLES: Record<string, string> = {
   ACTIVE: "bg-[var(--color-success)]/10 text-[var(--color-success)]",
-  CONSUMED: "bg-slate-100 text-slate-500",
+  CONSUMED: "bg-[var(--color-ink)]/5 text-[var(--color-ink-soft)]",
   EXPIRED: "bg-[var(--color-danger)]/10 text-[var(--color-danger)]",
 };
 
