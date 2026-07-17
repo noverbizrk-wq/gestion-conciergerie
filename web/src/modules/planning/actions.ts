@@ -7,29 +7,46 @@ import { startOfWeek, endOfWeek, addDays } from "date-fns";
 export type PlanningEvent = {
   id: string;
   date: Date;
-  kind: "CHECKIN" | "CHECKOUT" | "CLEANING";
+  kind: "CHECKIN" | "CHECKOUT" | "CLEANING" | "MISSION";
   label: string;
   propertyName: string;
   propertyId: string;
   durationMinutes?: number;
+  missionId?: string;
+  missionStatus?: string;
+  employeeId?: string | null;
+  employeeName?: string | null;
+};
+
+export type PlanningFilters = {
+  propertyId?: string;
+  employeeId?: string;
 };
 
 /**
- * Récupère les événements de la semaine (check-in/check-out de réservations +
- * ménages planifiés) pour alimenter la vue planning, sur le modèle de la page
- * "Interventions" du back-office de référence (Ogustine) : vue calendrier
- * semaine, un jour par colonne.
+ * Récupère les événements de la période (check-in/check-out de réservations,
+ * ménages facturés historiques + missions du moteur d'automatisation) pour
+ * alimenter la vue planning. Filtrable par logement et par intervenant —
+ * l'affectation d'une mission à un intervenant reste toujours modifiable
+ * manuellement depuis la fiche mission (lien direct depuis chaque événement).
  */
-export async function getWeekPlanningAction(companyId: string, referenceDate: Date) {
-  await requireRole(companyId, ["ADMIN", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
+export async function getWeekPlanningAction(
+  companyId: string,
+  referenceDate: Date,
+  filters?: PlanningFilters
+) {
+  await requireRole(companyId, ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "EMPLOYEE", "READONLY", "AGENT"]);
 
   const weekStart = startOfWeek(referenceDate, { weekStartsOn: 1 });
   const weekEnd = endOfWeek(referenceDate, { weekStartsOn: 1 });
 
-  const [bookings, cleaningTasks] = await Promise.all([
+  const propertyFilter = filters?.propertyId ? { propertyId: filters.propertyId } : {};
+
+  const [bookings, cleaningTasks, missions] = await Promise.all([
     prisma.booking.findMany({
       where: {
         companyId,
+        ...propertyFilter,
         OR: [
           { checkIn: { gte: weekStart, lte: weekEnd } },
           { checkOut: { gte: weekStart, lte: weekEnd } },
@@ -38,8 +55,17 @@ export async function getWeekPlanningAction(companyId: string, referenceDate: Da
       include: { property: true },
     }),
     prisma.cleaningTask.findMany({
-      where: { companyId, date: { gte: weekStart, lte: weekEnd } },
+      where: { companyId, ...propertyFilter, date: { gte: weekStart, lte: weekEnd } },
       include: { property: true },
+    }),
+    prisma.mission.findMany({
+      where: {
+        companyId,
+        ...propertyFilter,
+        ...(filters?.employeeId ? { employeeId: filters.employeeId } : {}),
+        scheduledDate: { gte: weekStart, lte: weekEnd },
+      },
+      include: { property: true, employee: true },
     }),
   ]);
 
@@ -73,10 +99,34 @@ export async function getWeekPlanningAction(companyId: string, referenceDate: Da
       id: task.id,
       date: task.date,
       kind: "CLEANING",
-      label: `Ménage — ${task.property.name}`,
+      label: `Ménage facturé — ${task.property.name}`,
       propertyName: task.property.name,
       propertyId: task.propertyId,
       durationMinutes: task.durationMinutes,
+    });
+  }
+
+  const MISSION_TYPE_LABELS: Record<string, string> = {
+    CLEANING: "Ménage",
+    QUALITY_CONTROL: "Contrôle qualité",
+    LAUNDRY: "Blanchisserie",
+    MAINTENANCE: "Maintenance",
+    CHECKIN_PREP: "Préparation check-in",
+  };
+
+  for (const mission of missions) {
+    events.push({
+      id: mission.id,
+      date: mission.scheduledDate,
+      kind: "MISSION",
+      label: `${MISSION_TYPE_LABELS[mission.type] ?? mission.type} — ${mission.property.name}`,
+      propertyName: mission.property.name,
+      propertyId: mission.propertyId,
+      durationMinutes: mission.estimatedDurationMinutes ?? undefined,
+      missionId: mission.id,
+      missionStatus: mission.status,
+      employeeId: mission.employeeId,
+      employeeName: mission.employee ? `${mission.employee.firstName} ${mission.employee.lastName}` : null,
     });
   }
 
