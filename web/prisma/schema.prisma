@@ -48,6 +48,54 @@ enum AccessCodeType {
   AUTRE
 }
 
+enum MissionType {
+  CLEANING
+  QUALITY_CONTROL
+  LAUNDRY
+  MAINTENANCE
+  CHECKIN_PREP
+}
+
+enum MissionStatus {
+  TO_PLAN
+  PLANNED
+  ASSIGNED
+  ACCEPTED
+  IN_PROGRESS
+  DONE
+  TO_REVIEW
+  VALIDATED
+  REFUSED
+  CANCELLED
+  LATE
+}
+
+enum MissionPriority {
+  LOW
+  NORMAL
+  HIGH
+  URGENT
+}
+
+enum MissionTaskCategory {
+  CUISINE
+  SALON
+  CHAMBRES
+  SALLE_DE_BAIN
+  TOILETTES
+  ENTREE
+  TERRASSE
+  LINGE
+  CONSOMMABLES
+  EQUIPEMENTS
+  SECURITE
+}
+
+enum MissionPhotoPhase {
+  BEFORE
+  AFTER
+}
+
 enum PaymentMethod {
   VIREMENT
   CB
@@ -258,6 +306,7 @@ model Property {
   quotations    Quotation[]
   reviews       Review[]
   accessCodes   PropertyAccessCode[]
+  missions      Mission[]
 
   @@index([companyId])
   @@index([ownerId])
@@ -322,8 +371,9 @@ model Booking {
   specialRequests    String?
   createdAt          DateTime      @default(now())
 
-  company  Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  company  Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  property Property  @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  missions Mission[]
 
   @@unique([propertyId, source, externalId])
   @@index([companyId])
@@ -558,6 +608,7 @@ model Employee {
   user           User?                  @relation(fields: [userId], references: [id])
   documents      EmployeeDocument[]
   availabilities EmployeeAvailability[]
+  missions       Mission[]
 
   @@index([companyId])
   @@map("employees")
@@ -588,4 +639,78 @@ model EmployeeAvailability {
 
   @@index([employeeId])
   @@map("employee_availabilities")
+}
+
+
+// ─────────────────────────────────────────────
+// MISSIONS (MOTEUR D'AUTOMATISATION TERRAIN)
+// ─────────────────────────────────────────────
+
+model Mission {
+  id                      String           @id @default(cuid())
+  companyId               String
+  propertyId              String
+  bookingId               String?
+  employeeId              String?
+  type                    MissionType
+  status                  MissionStatus    @default(TO_PLAN)
+  priority                MissionPriority  @default(NORMAL)
+  scheduledDate           DateTime
+  startTime               String? // "11:00"
+  dueTime                 String? // "15:00"
+  estimatedDurationMinutes Int?
+  instructions            String?
+  photosRequired          Boolean          @default(true)
+  comments                String?
+  acceptedAt              DateTime?
+  startedAt               DateTime?
+  completedAt             DateTime?
+  validatedAt             DateTime?
+  createdAt               DateTime         @default(now())
+  updatedAt                DateTime        @updatedAt
+
+  property Property     @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+  booking  Booking?     @relation(fields: [bookingId], references: [id])
+  employee Employee?    @relation(fields: [employeeId], references: [id])
+  tasks    MissionTask[]
+  photos   MissionPhoto[]
+
+  @@unique([bookingId, type])
+  @@index([companyId])
+  @@index([propertyId])
+  @@index([employeeId])
+  @@index([scheduledDate])
+  @@map("missions")
+}
+
+model MissionTask {
+  id              String              @id @default(cuid())
+  missionId       String
+  category        MissionTaskCategory
+  label           String
+  required        Boolean             @default(true)
+  photoRequired   Boolean             @default(false)
+  commentRequired Boolean             @default(false)
+  done            Boolean             @default(false)
+  comment         String?
+  order           Int                 @default(0)
+
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@index([missionId])
+  @@map("mission_tasks")
+}
+
+model MissionPhoto {
+  id          String            @id @default(cuid())
+  missionId   String
+  phase       MissionPhotoPhase
+  room        String?
+  storagePath String
+  takenAt     DateTime          @default(now())
+
+  mission Mission @relation(fields: [missionId], references: [id], onDelete: Cascade)
+
+  @@index([missionId])
+  @@map("mission_photos")
 }

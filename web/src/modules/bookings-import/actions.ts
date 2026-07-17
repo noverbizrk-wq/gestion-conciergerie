@@ -6,6 +6,7 @@ import { parseAirbnbCsv } from "./airbnb-csv-parser";
 import { matchPropertyByName, persistBookings } from "./repository";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { generateMissionsForBookings } from "@/modules/missions/generator";
 
 export interface ImportPreviewRow {
   externalId: string;
@@ -81,8 +82,14 @@ export async function confirmImportAction(
     diff: { count: result.createdOrUpdated, failed: result.failed },
   });
 
+  // Génération automatique des missions (ménage + contrôle qualité) pour chaque réservation
+  // importée — cf. moteur d'automatisation (section 8 du cahier des charges). Idempotent :
+  // ne recrée pas de mission si elle existe déjà pour une réservation déjà importée.
+  const missionResult = await generateMissionsForBookings(result.bookingIds, companyId);
+
   revalidatePath("/bookings");
-  return result;
+  revalidatePath("/missions");
+  return { ...result, missionsGenerated: missionResult.created.length };
 }
 
 

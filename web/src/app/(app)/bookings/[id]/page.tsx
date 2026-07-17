@@ -2,7 +2,17 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { getBookingAction } from "@/modules/bookings-import/actions";
+import { listMissionsAction } from "@/modules/missions/actions";
 import { BookingStatusForm } from "./status-form";
+import { GenerateMissionsButton } from "./generate-missions-button";
+
+const MISSION_TYPE_LABELS: Record<string, string> = {
+  CLEANING: "Ménage",
+  QUALITY_CONTROL: "Contrôle qualité",
+  LAUNDRY: "Blanchisserie",
+  MAINTENANCE: "Maintenance",
+  CHECKIN_PREP: "Préparation check-in",
+};
 
 const STATUS_STYLES: Record<string, string> = {
   IMPORTED: "bg-[var(--color-brass)]/10 text-[var(--color-brass-dark)]",
@@ -30,6 +40,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
   if (!result) notFound();
 
   const { booking, activity } = result;
+  const missions = await listMissionsAction(membership.companyId, { bookingId: booking.id });
 
   return (
     <div>
@@ -133,12 +144,35 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           </section>
         </div>
 
-        <div>
+        <div className="space-y-6">
           <BookingStatusForm
             bookingId={booking.id}
             companyId={membership.companyId}
             currentStatus={booking.status}
           />
+
+          <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
+            <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-3">
+              Missions ({missions.length})
+            </h2>
+            {missions.length === 0 ? (
+              <p className="text-sm text-[var(--color-ink-soft)] mb-3">Aucune mission générée pour le moment.</p>
+            ) : (
+              <ul className="space-y-2 mb-3">
+                {missions.map((mission) => (
+                  <li key={mission.id}>
+                    <Link
+                      href={`/missions/${mission.id}`}
+                      className="text-sm text-[var(--color-brass-dark)] hover:underline"
+                    >
+                      {MISSION_TYPE_LABELS[mission.type] ?? mission.type}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <GenerateMissionsButton bookingId={booking.id} companyId={membership.companyId} />
+          </section>
         </div>
       </div>
     </div>

@@ -62,8 +62,12 @@ export async function persistBookings(
   );
 
   const failed = results.filter((r) => r.status === "rejected") as PromiseRejectedResult[];
+  const succeeded = results.filter(
+    (r): r is PromiseFulfilledResult<Awaited<ReturnType<typeof prisma.booking.upsert>>> => r.status === "fulfilled"
+  );
   return {
     createdOrUpdated: results.length - failed.length,
     failed: failed.map((f) => String(f.reason)),
+    bookingIds: succeeded.map((r) => r.value.id),
   };
 }
