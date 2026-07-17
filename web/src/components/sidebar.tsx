@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { LayoutDashboard, Users, Home, FileText, Upload, Sparkles } from "lucide-react";
+import { LayoutDashboard, Users, Home, FileText, Upload, Sparkles, CalendarDays } from "lucide-react";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { SignOutButton } from "@/components/sign-out-button";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
+  { href: "/planning", label: "Planning", icon: CalendarDays },
   { href: "/owners", label: "Propriétaires", icon: Users },
   { href: "/properties", label: "Logements", icon: Home },
   { href: "/bookings", label: "Import réservations", icon: Upload },
