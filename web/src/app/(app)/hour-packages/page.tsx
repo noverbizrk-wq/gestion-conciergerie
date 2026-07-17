@@ -1,0 +1,106 @@
+import { getCurrentUserMembership } from "@/lib/auth-guard";
+import { listHourPackagesAction } from "@/modules/hour-packages/actions";
+import { listOwnersAction } from "@/modules/owners/actions";
+import { NewPackageForm } from "./new-package-form";
+import { ConsumeButton } from "./consume-button";
+
+const STATUS_LABELS: Record<string, string> = {
+  ACTIVE: "Actif",
+  CONSUMED: "Épuisé",
+  EXPIRED: "Expiré",
+};
+
+const STATUS_STYLES: Record<string, string> = {
+  ACTIVE: "bg-[var(--color-success)]/10 text-[var(--color-success)]",
+  CONSUMED: "bg-slate-100 text-slate-500",
+  EXPIRED: "bg-[var(--color-danger)]/10 text-[var(--color-danger)]",
+};
+
+export default async function HourPackagesPage() {
+  const membership = await getCurrentUserMembership();
+  if (!membership) {
+    return (
+      <div className="rounded-lg border border-dashed border-[var(--color-line)] p-8 text-sm text-[var(--color-ink-soft)]">
+        Votre compte n&apos;est rattaché à aucune société pour le moment.
+      </div>
+    );
+  }
+
+  const [packages, owners] = await Promise.all([
+    listHourPackagesAction(membership.companyId),
+    listOwnersAction(membership.companyId),
+  ]);
+
+  return (
+    <div>
+      <header className="mb-6 flex items-start justify-between">
+        <div>
+          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+            Packs d&apos;heures
+          </h1>
+          <p className="text-sm text-[var(--color-ink-soft)] mt-1">
+            {packages.length} pack{packages.length > 1 ? "s" : ""} d&apos;heures prépayées
+          </p>
+        </div>
+        <NewPackageForm
+          companyId={membership.companyId}
+          owners={owners.map((o) => ({ id: o.id, firstName: o.firstName, lastName: o.lastName }))}
+        />
+      </header>
+
+      <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+            <tr>
+              <th className="px-4 py-3">Client</th>
+              <th className="px-4 py-3">Heures totales</th>
+              <th className="px-4 py-3">Consommées</th>
+              <th className="px-4 py-3">Restantes</th>
+              <th className="px-4 py-3">Prix / heure</th>
+              <th className="px-4 py-3">Expire le</th>
+              <th className="px-4 py-3">Statut</th>
+              <th className="px-4 py-3" />
+            </tr>
+          </thead>
+          <tbody>
+            {packages.length === 0 ? (
+              <tr>
+                <td colSpan={8} className="px-4 py-8 text-center text-[var(--color-ink-soft)]">
+                  Aucun pack d&apos;heures pour le moment.
+                </td>
+              </tr>
+            ) : (
+              packages.map((pack) => {
+                const remaining = Number(pack.totalHours) - Number(pack.usedHours);
+                return (
+                  <tr key={pack.id} className="border-t border-[var(--color-line)]">
+                    <td className="px-4 py-3 font-medium">
+                      {pack.owner.firstName} {pack.owner.lastName}
+                    </td>
+                    <td className="px-4 py-3">{Number(pack.totalHours)}h</td>
+                    <td className="px-4 py-3">{Number(pack.usedHours)}h</td>
+                    <td className="px-4 py-3">{remaining}h</td>
+                    <td className="px-4 py-3">{Number(pack.pricePerHour).toLocaleString("fr-FR")} €</td>
+                    <td className="px-4 py-3">
+                      {pack.expiresAt ? pack.expiresAt.toLocaleDateString("fr-FR") : "—"}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLES[pack.status]}`}>
+                        {STATUS_LABELS[pack.status]}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3">
+                      {pack.status === "ACTIVE" ? (
+                        <ConsumeButton packageId={pack.id} companyId={membership.companyId} />
+                      ) : null}
+                    </td>
+                  </tr>
+                );
+              })
+            )}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}

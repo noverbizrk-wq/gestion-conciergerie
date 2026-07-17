@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { LayoutDashboard, Users, Home, FileText, FileSignature, Upload, Sparkles, CalendarDays, Wallet, Settings } from "lucide-react";
+import { LayoutDashboard, Users, Home, FileText, FileSignature, Upload, Sparkles, CalendarDays, Wallet, Settings, Star, Clock } from "lucide-react";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { SignOutButton } from "@/components/sign-out-button";
 
@@ -12,6 +12,8 @@ const NAV_ITEMS = [
   { href: "/quotes", label: "Devis", icon: FileSignature },
   { href: "/invoices", label: "Factures", icon: FileText },
   { href: "/payments", label: "Encaissements", icon: Wallet },
+  { href: "/reviews", label: "Avis clients", icon: Star },
+  { href: "/hour-packages", label: "Packs d'heures", icon: Clock },
   { href: "/assistant", label: "Assistant IA", icon: Sparkles },
   { href: "/settings", label: "Paramètres & Services", icon: Settings },
 ];

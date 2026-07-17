@@ -87,6 +87,18 @@ enum QuotationStatus {
   ARCHIVED
 }
 
+enum ReviewStatus {
+  PENDING
+  PUBLISHED
+  REJECTED
+}
+
+enum HourPackageStatus {
+  ACTIVE
+  CONSUMED
+  EXPIRED
+}
+
 enum PaymentStatus {
   PENDING
   CONFIRMED
@@ -120,13 +132,15 @@ model Company {
   createdAt        DateTime  @default(now())
   updatedAt        DateTime  @updatedAt
 
-  memberships Membership[]
-  owners      Owner[]
-  properties  Property[]
-  invoices    Invoice[]
-  quotations  Quotation[]
-  auditLogs   AuditLog[]
-  bookings    Booking[]
+  memberships   Membership[]
+  owners        Owner[]
+  properties    Property[]
+  invoices      Invoice[]
+  quotations    Quotation[]
+  auditLogs     AuditLog[]
+  bookings      Booking[]
+  reviews       Review[]
+  hourPackages  HourPackage[]
 
   @@map("companies")
 }
@@ -179,11 +193,12 @@ model Owner {
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
 
-  company    Company    @relation(fields: [companyId], references: [id], onDelete: Cascade)
-  properties Property[]
-  invoices   Invoice[]
-  quotations Quotation[]
-  documents  Document[]
+  company      Company       @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  properties   Property[]
+  invoices     Invoice[]
+  quotations   Quotation[]
+  documents    Document[]
+  hourPackages HourPackage[]
 
   @@index([companyId])
   @@map("owners")
@@ -214,6 +229,7 @@ model Property {
   cleaningTasks CleaningTask[]
   invoices      Invoice[]
   quotations    Quotation[]
+  reviews       Review[]
 
   @@index([companyId])
   @@index([ownerId])
@@ -412,4 +428,51 @@ model AuditLog {
 
   @@index([companyId])
   @@map("audit_logs")
+}
+
+// ─────────────────────────────────────────────
+// AVIS CLIENTS
+// ─────────────────────────────────────────────
+
+model Review {
+  id          String       @id @default(cuid())
+  companyId   String
+  propertyId  String
+  bookingId   String?
+  authorName  String?
+  rating      Int
+  comment     String?
+  status      ReviewStatus @default(PENDING)
+  createdAt   DateTime     @default(now())
+  publishedAt DateTime?
+
+  company  Company  @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  property Property @relation(fields: [propertyId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("reviews")
+}
+
+// ─────────────────────────────────────────────
+// PACKS D'HEURES PRÉPAYÉES
+// ─────────────────────────────────────────────
+
+model HourPackage {
+  id            String            @id @default(cuid())
+  companyId     String
+  ownerId       String
+  totalHours    Decimal           @db.Decimal(6, 2)
+  usedHours     Decimal           @default(0) @db.Decimal(6, 2)
+  pricePerHour  Decimal           @db.Decimal(10, 2)
+  status        HourPackageStatus @default(ACTIVE)
+  purchasedAt   DateTime          @default(now())
+  expiresAt     DateTime?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+
+  company Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  owner   Owner   @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+
+  @@index([companyId])
+  @@map("hour_packages")
 }
