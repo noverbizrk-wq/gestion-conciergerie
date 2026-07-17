@@ -11,15 +11,15 @@ export default async function OwnersPage() {
     <div>
       <OwnersToolbar companyId={membership?.companyId ?? ""} count={owners.length} />
 
-      <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
+      <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+          <thead className="bg-[var(--color-paper)] text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] border-b border-[var(--color-line)]">
             <tr>
-              <th className="px-4 py-3">Nom</th>
-              <th className="px-4 py-3">Régime TVA</th>
-              <th className="px-4 py-3">Logements</th>
-              <th className="px-4 py-3">Paiement</th>
-              <th className="px-4 py-3">Contact</th>
+              <th className="px-5 py-3.5">Nom</th>
+              <th className="px-5 py-3.5">Régime TVA</th>
+              <th className="px-5 py-3.5">Logements</th>
+              <th className="px-5 py-3.5">Paiement</th>
+              <th className="px-5 py-3.5">Contact</th>
             </tr>
           </thead>
           <tbody>
@@ -31,8 +31,8 @@ export default async function OwnersPage() {
               </tr>
             ) : (
               owners.map((owner) => (
-                <tr key={owner.id} className="border-t border-[var(--color-line)]">
-                  <td className="px-4 py-3 font-medium">
+                <tr key={owner.id} className="border-t border-[var(--color-line)] transition-colors hover:bg-[var(--color-paper)]">
+                  <td className="px-5 py-3.5 font-medium">
                     <Link href={`/owners/${owner.id}`} className="hover:text-[var(--color-brass-dark)] hover:underline">
                       {owner.firstName} {owner.lastName}
                     </Link>
@@ -40,10 +40,10 @@ export default async function OwnersPage() {
                       <span className="block text-xs text-[var(--color-ink-soft)]">{owner.companyName}</span>
                     ) : null}
                   </td>
-                  <td className="px-4 py-3">{owner.vatRegime}</td>
-                  <td className="px-4 py-3">{owner.properties.length}</td>
-                  <td className="px-4 py-3">{owner.paymentMethod}</td>
-                  <td className="px-4 py-3 text-[var(--color-ink-soft)]">{owner.email ?? "—"}</td>
+                  <td className="px-5 py-3.5">{owner.vatRegime}</td>
+                  <td className="px-5 py-3.5">{owner.properties.length}</td>
+                  <td className="px-5 py-3.5">{owner.paymentMethod}</td>
+                  <td className="px-5 py-3.5 text-[var(--color-ink-soft)]">{owner.email ?? "—"}</td>
                 </tr>
               ))
             )}

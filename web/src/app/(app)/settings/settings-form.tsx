@@ -39,7 +39,7 @@ export function SettingsForm({ companyId, company }: { companyId: string; compan
   }
 
   return (
-    <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-6 space-y-6 max-w-2xl">
+    <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-6 space-y-6 max-w-2xl">
       <section>
         <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-4">Identité</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -53,7 +53,7 @@ export function SettingsForm({ companyId, company }: { companyId: string; compan
             <input {...field("tvaIntracom")} className="input" />
           </FormField>
           <FormField label="Couleur de marque">
-            <input type="color" {...field("brandColor")} className="h-10 w-full rounded-md border border-[var(--color-line)]" />
+            <input type="color" {...field("brandColor")} className="h-10 w-full rounded-lg border border-[var(--color-line)]" />
           </FormField>
           <FormField label="Adresse" full>
             <input {...field("address")} className="input" />
@@ -129,7 +129,7 @@ export function SettingsForm({ companyId, company }: { companyId: string; compan
               }
             });
           }}
-          className="rounded-md bg-[var(--color-ink)] text-white text-sm px-5 py-2.5 hover:bg-[var(--color-ink)]/90 transition-colors disabled:opacity-50"
+          className="rounded-lg bg-[var(--color-ink)] text-white text-sm px-5 py-2.5 hover:bg-[var(--color-ink)]/90 transition-colors disabled:opacity-50"
         >
           {isPending ? "Enregistrement..." : "Enregistrer"}
         </button>
@@ -138,11 +138,17 @@ export function SettingsForm({ companyId, company }: { companyId: string; compan
       <style jsx>{`
         .input {
           width: 100%;
-          border-radius: 0.375rem;
+          border-radius: 0.5rem;
           border: 1px solid var(--color-line);
           background: white;
           padding: 0.5rem 0.75rem;
           font-size: 0.875rem;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .input:focus {
+          outline: none;
+          border-color: var(--color-brass);
+          box-shadow: 0 0 0 3px rgb(99 102 241 / 0.2);
         }
       `}</style>
     </div>

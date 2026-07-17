@@ -48,7 +48,7 @@ export function OwnerEditForm({ companyId, owner }: { companyId: string; owner: 
   }
 
   return (
-    <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-6 space-y-4 max-w-2xl">
+    <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-6 space-y-4 max-w-2xl">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <FormField label="Prénom">
           <input {...field("firstName")} className="input" />
@@ -136,7 +136,7 @@ export function OwnerEditForm({ companyId, owner }: { companyId: string; owner: 
               }
             });
           }}
-          className="rounded-md bg-[var(--color-ink)] text-white text-sm px-5 py-2.5 hover:bg-[var(--color-ink)]/90 transition-colors disabled:opacity-50"
+          className="rounded-lg bg-[var(--color-ink)] text-white text-sm px-5 py-2.5 hover:bg-[var(--color-ink)]/90 transition-colors disabled:opacity-50"
         >
           {isPending ? "Enregistrement..." : "Enregistrer"}
         </button>
@@ -145,11 +145,17 @@ export function OwnerEditForm({ companyId, owner }: { companyId: string; owner: 
       <style jsx>{`
         .input {
           width: 100%;
-          border-radius: 0.375rem;
+          border-radius: 0.5rem;
           border: 1px solid var(--color-line);
           background: white;
           padding: 0.5rem 0.75rem;
           font-size: 0.875rem;
+          transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+        .input:focus {
+          outline: none;
+          border-color: var(--color-brass);
+          box-shadow: 0 0 0 3px rgb(99 102 241 / 0.2);
         }
       `}</style>
     </div>

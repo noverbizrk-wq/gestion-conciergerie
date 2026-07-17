@@ -42,7 +42,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
 
       <header className="mt-2 mb-6 flex items-start justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+          <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
             {booking.property.name}
           </h1>
           <p className="text-sm text-[var(--color-ink-soft)] mt-1">
@@ -57,7 +57,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="md:col-span-2 space-y-6">
-          <section className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-5">
+          <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
             <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-4">
               Détails du séjour
             </h2>
@@ -93,7 +93,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
             </dl>
           </section>
 
-          <section className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-5">
+          <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
             <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-4">
               Journal d&apos;activité
             </h2>

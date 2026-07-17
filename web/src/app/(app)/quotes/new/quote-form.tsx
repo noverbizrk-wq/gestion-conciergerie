@@ -40,7 +40,7 @@ export function QuoteForm({
   }
 
   return (
-    <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-6 space-y-6">
+    <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="space-y-1">
           <label className="text-xs font-medium text-[var(--color-ink-soft)]">Client</label>
@@ -50,7 +50,7 @@ export function QuoteForm({
               setOwnerId(e.target.value);
               setPropertyId("");
             }}
-            className="w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm transition-colors focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
           >
             {owners.map((o) => (
               <option key={o.id} value={o.id}>
@@ -64,7 +64,7 @@ export function QuoteForm({
           <select
             value={propertyId}
             onChange={(e) => setPropertyId(e.target.value)}
-            className="w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm transition-colors focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
           >
             <option value="">—</option>
             {availableProperties.map((p) => (
@@ -80,7 +80,7 @@ export function QuoteForm({
             type="date"
             value={validUntil}
             onChange={(e) => setValidUntil(e.target.value)}
-            className="w-full rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+            className="w-full rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm transition-colors focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
           />
         </div>
       </div>
@@ -104,7 +104,7 @@ export function QuoteForm({
                 placeholder="Description"
                 value={line.description}
                 onChange={(e) => updateLine(i, { description: e.target.value })}
-                className="col-span-5 rounded-md border border-[var(--color-line)] bg-white px-2 py-1.5 text-sm"
+                className="col-span-5 rounded-lg border border-[var(--color-line)] bg-white px-2 py-1.5 text-sm"
               />
               <input
                 type="number"
@@ -113,7 +113,7 @@ export function QuoteForm({
                 placeholder="Qté"
                 value={line.quantity}
                 onChange={(e) => updateLine(i, { quantity: Number(e.target.value) })}
-                className="col-span-2 rounded-md border border-[var(--color-line)] bg-white px-2 py-1.5 text-sm"
+                className="col-span-2 rounded-lg border border-[var(--color-line)] bg-white px-2 py-1.5 text-sm"
               />
               <input
                 type="number"
@@ -122,7 +122,7 @@ export function QuoteForm({
                 placeholder="Prix HT"
                 value={line.unitPriceHT}
                 onChange={(e) => updateLine(i, { unitPriceHT: Number(e.target.value) })}
-                className="col-span-2 rounded-md border border-[var(--color-line)] bg-white px-2 py-1.5 text-sm"
+                className="col-span-2 rounded-lg border border-[var(--color-line)] bg-white px-2 py-1.5 text-sm"
               />
               <input
                 type="number"
@@ -131,7 +131,7 @@ export function QuoteForm({
                 placeholder="TVA %"
                 value={line.vatRate}
                 onChange={(e) => updateLine(i, { vatRate: Number(e.target.value) })}
-                className="col-span-2 rounded-md border border-[var(--color-line)] bg-white px-2 py-1.5 text-sm"
+                className="col-span-2 rounded-lg border border-[var(--color-line)] bg-white px-2 py-1.5 text-sm"
               />
               <button
                 type="button"
@@ -175,7 +175,7 @@ export function QuoteForm({
                 }
               });
             }}
-            className="rounded-md bg-[var(--color-ink)] text-white text-sm px-5 py-2.5 hover:bg-[var(--color-ink)]/90 transition-colors disabled:opacity-50"
+            className="rounded-lg bg-[var(--color-ink)] text-white text-sm px-5 py-2.5 hover:bg-[var(--color-ink)]/90 transition-colors disabled:opacity-50"
           >
             {isPending ? "Création..." : "Créer le devis"}
           </button>

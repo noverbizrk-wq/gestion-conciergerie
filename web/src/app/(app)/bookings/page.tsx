@@ -22,7 +22,7 @@ export default async function BookingsPage() {
     <div>
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+          <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
             Réservations
           </h1>
           <p className="text-sm text-[var(--color-ink-soft)] mt-1">
@@ -31,22 +31,22 @@ export default async function BookingsPage() {
         </div>
         <Link
           href="/bookings/import"
-          className="rounded-md bg-[var(--color-brass)] text-white text-sm px-4 py-2 hover:bg-[var(--color-brass-dark)] transition-colors"
+          className="rounded-lg bg-[var(--color-brass)] text-white text-sm font-medium px-4 py-2 shadow-sm hover:bg-[var(--color-brass-dark)] transition-all active:scale-[0.98]"
         >
           Importer un CSV
         </Link>
       </header>
 
-      <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
+      <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+          <thead className="bg-[var(--color-paper)] text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] border-b border-[var(--color-line)]">
             <tr>
-              <th className="px-4 py-3">Logement</th>
-              <th className="px-4 py-3">Source</th>
-              <th className="px-4 py-3">Arrivée</th>
-              <th className="px-4 py-3">Départ</th>
-              <th className="px-4 py-3">Montant brut</th>
-              <th className="px-4 py-3">Statut</th>
+              <th className="px-5 py-3.5">Logement</th>
+              <th className="px-5 py-3.5">Source</th>
+              <th className="px-5 py-3.5">Arrivée</th>
+              <th className="px-5 py-3.5">Départ</th>
+              <th className="px-5 py-3.5">Montant brut</th>
+              <th className="px-5 py-3.5">Statut</th>
             </tr>
           </thead>
           <tbody>
@@ -58,18 +58,18 @@ export default async function BookingsPage() {
               </tr>
             ) : (
               bookings.map((booking) => (
-                <tr key={booking.id} className="border-t border-[var(--color-line)]">
-                  <td className="px-4 py-3 font-medium">
+                <tr key={booking.id} className="border-t border-[var(--color-line)] transition-colors hover:bg-[var(--color-paper)]">
+                  <td className="px-5 py-3.5 font-medium">
                     <Link href={`/bookings/${booking.id}`} className="hover:text-[var(--color-brass-dark)] hover:underline">
                       {booking.property.name}
                     </Link>
                   </td>
-                  <td className="px-4 py-3">{booking.source}</td>
-                  <td className="px-4 py-3">{booking.checkIn.toLocaleDateString("fr-FR")}</td>
-                  <td className="px-4 py-3">{booking.checkOut.toLocaleDateString("fr-FR")}</td>
-                  <td className="px-4 py-3">{Number(booking.grossAmount).toLocaleString("fr-FR")} €</td>
-                  <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLES[booking.status]}`}>
+                  <td className="px-5 py-3.5">{booking.source}</td>
+                  <td className="px-5 py-3.5">{booking.checkIn.toLocaleDateString("fr-FR")}</td>
+                  <td className="px-5 py-3.5">{booking.checkOut.toLocaleDateString("fr-FR")}</td>
+                  <td className="px-5 py-3.5">{Number(booking.grossAmount).toLocaleString("fr-FR")} €</td>
+                  <td className="px-5 py-3.5">
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[booking.status]}`}>
                       {STATUS_LABELS[booking.status]}
                     </span>
                   </td>

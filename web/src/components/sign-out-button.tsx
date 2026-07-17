@@ -10,7 +10,7 @@ export function SignOutButton() {
     >
       <button
         type="submit"
-        className="text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-danger)] transition-colors"
+        className="w-full text-left text-xs font-medium text-[var(--color-ink-soft)] hover:text-[var(--color-danger)] transition-colors py-1"
       >
         Déconnexion
       </button>

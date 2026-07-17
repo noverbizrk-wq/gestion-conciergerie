@@ -59,7 +59,7 @@ export function QuotationStatusActions({
               router.refresh();
             });
           }}
-          className={`rounded-md text-sm px-4 py-2 transition-colors disabled:opacity-50 ${TONE_STYLES[action.tone]}`}
+          className={`rounded-lg text-sm px-4 py-2 transition-colors disabled:opacity-50 ${TONE_STYLES[action.tone]}`}
         >
           {action.label}
         </button>
@@ -74,7 +74,7 @@ export function QuotationStatusActions({
               router.push(`/invoices/${invoice.id}`);
             });
           }}
-          className="rounded-md bg-[var(--color-ink)] text-white text-sm px-4 py-2 hover:bg-[var(--color-ink)]/90 transition-colors disabled:opacity-50"
+          className="rounded-lg bg-[var(--color-ink)] text-white text-sm font-medium px-4 py-2 shadow-sm hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50"
         >
           {isPending ? "Conversion..." : "Convertir en facture"}
         </button>

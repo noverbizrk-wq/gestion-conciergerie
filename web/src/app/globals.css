@@ -1,50 +1,155 @@
 @import "tailwindcss";
 
 /*
-  Identité visuelle Nover Invoice — inspirée de la conciergerie hôtelière haut de gamme :
-  encre profonde + laiton (clé de chambre / clef en laiton), sur fond clin d'oeil "carnet de compte".
-  Display: Fraunces (serif contemporaine, chaleureuse) pour les titres et montants clés.
-  Corps: Inter pour la lisibilité des tableaux et données chiffrées.
+  Design system Nover Invoice — refonte 2026 : palette sobre et premium
+  (blanc / gris clair / anthracite) avec un accent indigo moderne, inspirée
+  des interfaces SaaS actuelles (Linear, Stripe, Vercel, Notion, Supabase,
+  GitHub). Les noms de variables sont conservés à l'identique pour ne rien
+  casser dans les composants existants — seules les valeurs changent.
+
+  Display: Fraunces (titres, montants clés). Corps: Inter (tableaux, données).
 */
+
 :root {
-  --color-ink: #1c2431; /* encre profonde - texte, header */
-  --color-ink-soft: #475061;
-  --color-paper: #faf9f6; /* fond carnet */
-  --color-paper-raised: #ffffff;
-  --color-brass: #b8935a; /* laiton - accent signature */
-  --color-brass-dark: #8f6f42;
-  --color-line: #e5e1d8;
-  --color-success: #2f6f4e;
-  --color-danger: #b23b3b;
-  --color-warning: #b8863a;
+  color-scheme: light;
+
+  /* Texte */
+  --color-ink: #0f172a; /* anthracite — texte principal */
+  --color-ink-soft: #64748b; /* gris ardoise — texte secondaire */
+
+  /* Surfaces */
+  --color-paper: #f7f8fa; /* fond de page, gris très clair */
+  --color-paper-raised: #ffffff; /* cartes, tableaux, formulaires */
+  --color-line: #e5e7eb; /* bordures sobres */
+
+  /* Accent — indigo moderne (remplace le laiton, noms conservés) */
+  --color-brass: #6366f1;
+  --color-brass-dark: #4f46e5;
+
+  /* États */
+  --color-success: #059669;
+  --color-danger: #dc2626;
+  --color-warning: #d97706;
+
+  /* Élévation */
+  --shadow-xs: 0 1px 2px 0 rgb(15 23 42 / 0.04);
+  --shadow-sm: 0 1px 3px 0 rgb(15 23 42 / 0.06), 0 1px 2px -1px rgb(15 23 42 / 0.06);
+  --shadow-md: 0 8px 20px -4px rgb(15 23 42 / 0.1), 0 2px 6px -2px rgb(15 23 42 / 0.05);
+  --shadow-lg: 0 20px 40px -8px rgb(15 23 42 / 0.16);
+
+  --focus-ring: 0 0 0 3px rgb(99 102 241 / 0.35);
+}
+
+:root[data-theme="dark"] {
+  color-scheme: dark;
+
+  --color-ink: #f1f5f9;
+  --color-ink-soft: #94a3b8;
+
+  --color-paper: #0a0e17;
+  --color-paper-raised: #131826;
+  --color-line: #242b3d;
+
+  --color-brass: #818cf8;
+  --color-brass-dark: #a5b4fc;
+
+  --color-success: #34d399;
+  --color-danger: #f87171;
+  --color-warning: #fbbf24;
+
+  --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+  --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+  --shadow-md: 0 8px 20px -4px rgb(0 0 0 / 0.5), 0 2px 6px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 20px 40px -8px rgb(0 0 0 / 0.6);
+
+  --focus-ring: 0 0 0 3px rgb(129 140 248 / 0.4);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]):not([data-theme="dark"]) {
+    color-scheme: dark;
+
+    --color-ink: #f1f5f9;
+    --color-ink-soft: #94a3b8;
+
+    --color-paper: #0a0e17;
+    --color-paper-raised: #131826;
+    --color-line: #242b3d;
+
+    --color-brass: #818cf8;
+    --color-brass-dark: #a5b4fc;
+
+    --color-success: #34d399;
+    --color-danger: #f87171;
+    --color-warning: #fbbf24;
+
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.3);
+    --shadow-md: 0 8px 20px -4px rgb(0 0 0 / 0.5), 0 2px 6px -2px rgb(0 0 0 / 0.3);
+    --shadow-lg: 0 20px 40px -8px rgb(0 0 0 / 0.6);
+  }
+}
+
+@theme inline {
+  --color-background: var(--color-paper);
+  --color-foreground: var(--color-ink);
+  --font-sans: var(--font-body);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+* {
+  border-color: var(--color-line);
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
   background-color: var(--color-paper);
   color: var(--color-ink);
+  font-family: var(--font-body), ui-sans-serif, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* Scrollbars sobres, cohérentes avec le thème */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background-color: var(--color-line);
+  border-radius: 999px;
+  border: 2px solid var(--color-paper);
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--color-ink-soft);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* États de focus accessibles (WCAG) — anneau visible sur tous les éléments interactifs */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 6px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+input,
+select,
+textarea {
+  color-scheme: inherit;
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+::selection {
+  background-color: var(--color-brass);
+  color: white;
 }

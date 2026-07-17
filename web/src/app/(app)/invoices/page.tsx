@@ -27,7 +27,7 @@ export default async function InvoicesPage() {
     <div>
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+          <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
             Factures
           </h1>
           <p className="text-sm text-[var(--color-ink-soft)] mt-1">
@@ -37,17 +37,17 @@ export default async function InvoicesPage() {
         <GenerateInvoicesButton companyId={membership?.companyId ?? ""} />
       </header>
 
-      <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
+      <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+          <thead className="bg-[var(--color-paper)] text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] border-b border-[var(--color-line)]">
             <tr>
-              <th className="px-4 py-3">Numéro</th>
-              <th className="px-4 py-3">Propriétaire</th>
-              <th className="px-4 py-3">Logement</th>
-              <th className="px-4 py-3">Total TTC</th>
-              <th className="px-4 py-3">Statut</th>
-              <th className="px-4 py-3">Échéance</th>
-              <th className="px-4 py-3" />
+              <th className="px-5 py-3.5">Numéro</th>
+              <th className="px-5 py-3.5">Propriétaire</th>
+              <th className="px-5 py-3.5">Logement</th>
+              <th className="px-5 py-3.5">Total TTC</th>
+              <th className="px-5 py-3.5">Statut</th>
+              <th className="px-5 py-3.5">Échéance</th>
+              <th className="px-5 py-3.5" />
             </tr>
           </thead>
           <tbody>
@@ -59,26 +59,26 @@ export default async function InvoicesPage() {
               </tr>
             ) : (
               invoices.map((invoice) => (
-                <tr key={invoice.id} className="border-t border-[var(--color-line)]">
-                  <td className="px-4 py-3 font-medium">
+                <tr key={invoice.id} className="border-t border-[var(--color-line)] transition-colors hover:bg-[var(--color-paper)]">
+                  <td className="px-5 py-3.5 font-medium">
                     <Link href={`/invoices/${invoice.id}`} className="hover:text-[var(--color-brass-dark)] hover:underline">
                       {invoice.number}
                     </Link>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-5 py-3.5">
                     {invoice.owner.firstName} {invoice.owner.lastName}
                   </td>
-                  <td className="px-4 py-3">{invoice.property?.name ?? "—"}</td>
-                  <td className="px-4 py-3">{Number(invoice.totalTTC).toLocaleString("fr-FR")} €</td>
-                  <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLES[invoice.status]}`}>
+                  <td className="px-5 py-3.5">{invoice.property?.name ?? "—"}</td>
+                  <td className="px-5 py-3.5">{Number(invoice.totalTTC).toLocaleString("fr-FR")} €</td>
+                  <td className="px-5 py-3.5">
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[invoice.status]}`}>
                       {STATUS_LABELS[invoice.status]}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-[var(--color-ink-soft)]">
+                  <td className="px-5 py-3.5 text-[var(--color-ink-soft)]">
                     {invoice.dueDate.toLocaleDateString("fr-FR")}
                   </td>
-                  <td className="px-4 py-3 text-right">
+                  <td className="px-5 py-3.5 text-right">
                     <a
                       href={`/api/invoices/${invoice.id}/pdf?companyId=${membership?.companyId ?? ""}`}
                       className="text-[var(--color-brass-dark)] hover:underline text-xs"

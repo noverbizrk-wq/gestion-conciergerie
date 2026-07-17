@@ -17,7 +17,7 @@ export default async function SettingsPage() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+        <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
           Paramètres & Services
         </h1>
         <p className="text-sm text-[var(--color-ink-soft)] mt-1">

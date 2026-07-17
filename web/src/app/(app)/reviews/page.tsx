@@ -43,7 +43,7 @@ export default async function ReviewsPage() {
     <div>
       <header className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+          <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
             Avis clients
           </h1>
           <p className="text-sm text-[var(--color-ink-soft)] mt-1">
@@ -61,7 +61,7 @@ export default async function ReviewsPage() {
         {(["PENDING", "PUBLISHED", "REJECTED"] as const).map((status) => (
           <div
             key={status}
-            className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] px-3 py-3 text-center"
+            className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm px-3 py-3 text-center"
           >
             <p className="font-[family-name:var(--font-display)] text-2xl text-[var(--color-ink)]">
               {counts[status] ?? 0}
@@ -73,16 +73,16 @@ export default async function ReviewsPage() {
         ))}
       </div>
 
-      <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
+      <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+          <thead className="bg-[var(--color-paper)] text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] border-b border-[var(--color-line)]">
             <tr>
-              <th className="px-4 py-3">Logement</th>
-              <th className="px-4 py-3">Auteur</th>
-              <th className="px-4 py-3">Note</th>
-              <th className="px-4 py-3">Commentaire</th>
-              <th className="px-4 py-3">Statut</th>
-              <th className="px-4 py-3" />
+              <th className="px-5 py-3.5">Logement</th>
+              <th className="px-5 py-3.5">Auteur</th>
+              <th className="px-5 py-3.5">Note</th>
+              <th className="px-5 py-3.5">Commentaire</th>
+              <th className="px-5 py-3.5">Statut</th>
+              <th className="px-5 py-3.5" />
             </tr>
           </thead>
           <tbody>
@@ -94,24 +94,24 @@ export default async function ReviewsPage() {
               </tr>
             ) : (
               reviews.map((review) => (
-                <tr key={review.id} className="border-t border-[var(--color-line)]">
-                  <td className="px-4 py-3">{review.property.name}</td>
-                  <td className="px-4 py-3">{review.authorName ?? "Anonyme"}</td>
-                  <td className="px-4 py-3">
+                <tr key={review.id} className="border-t border-[var(--color-line)] transition-colors hover:bg-[var(--color-paper)]">
+                  <td className="px-5 py-3.5">{review.property.name}</td>
+                  <td className="px-5 py-3.5">{review.authorName ?? "Anonyme"}</td>
+                  <td className="px-5 py-3.5">
                     <span className="text-[var(--color-brass)]">
                       {"★".repeat(review.rating)}
                       {"☆".repeat(5 - review.rating)}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-[var(--color-ink-soft)] max-w-xs truncate">
+                  <td className="px-5 py-3.5 text-[var(--color-ink-soft)] max-w-xs truncate">
                     {review.comment ?? "—"}
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLES[review.status]}`}>
+                  <td className="px-5 py-3.5">
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[review.status]}`}>
                       {STATUS_LABELS[review.status]}
                     </span>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-5 py-3.5">
                     {review.status === "PENDING" ? (
                       <ReviewActions reviewId={review.id} companyId={membership.companyId} />
                     ) : null}

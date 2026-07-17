@@ -35,7 +35,7 @@ export default async function HourPackagesPage() {
     <div>
       <header className="mb-6 flex items-start justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+          <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
             Packs d&apos;heures
           </h1>
           <p className="text-sm text-[var(--color-ink-soft)] mt-1">
@@ -48,18 +48,18 @@ export default async function HourPackagesPage() {
         />
       </header>
 
-      <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
+      <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+          <thead className="bg-[var(--color-paper)] text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] border-b border-[var(--color-line)]">
             <tr>
-              <th className="px-4 py-3">Client</th>
-              <th className="px-4 py-3">Heures totales</th>
-              <th className="px-4 py-3">Consommées</th>
-              <th className="px-4 py-3">Restantes</th>
-              <th className="px-4 py-3">Prix / heure</th>
-              <th className="px-4 py-3">Expire le</th>
-              <th className="px-4 py-3">Statut</th>
-              <th className="px-4 py-3" />
+              <th className="px-5 py-3.5">Client</th>
+              <th className="px-5 py-3.5">Heures totales</th>
+              <th className="px-5 py-3.5">Consommées</th>
+              <th className="px-5 py-3.5">Restantes</th>
+              <th className="px-5 py-3.5">Prix / heure</th>
+              <th className="px-5 py-3.5">Expire le</th>
+              <th className="px-5 py-3.5">Statut</th>
+              <th className="px-5 py-3.5" />
             </tr>
           </thead>
           <tbody>
@@ -73,23 +73,23 @@ export default async function HourPackagesPage() {
               packages.map((pack) => {
                 const remaining = Number(pack.totalHours) - Number(pack.usedHours);
                 return (
-                  <tr key={pack.id} className="border-t border-[var(--color-line)]">
-                    <td className="px-4 py-3 font-medium">
+                  <tr key={pack.id} className="border-t border-[var(--color-line)] transition-colors hover:bg-[var(--color-paper)]">
+                    <td className="px-5 py-3.5 font-medium">
                       {pack.owner.firstName} {pack.owner.lastName}
                     </td>
-                    <td className="px-4 py-3">{Number(pack.totalHours)}h</td>
-                    <td className="px-4 py-3">{Number(pack.usedHours)}h</td>
-                    <td className="px-4 py-3">{remaining}h</td>
-                    <td className="px-4 py-3">{Number(pack.pricePerHour).toLocaleString("fr-FR")} €</td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3.5">{Number(pack.totalHours)}h</td>
+                    <td className="px-5 py-3.5">{Number(pack.usedHours)}h</td>
+                    <td className="px-5 py-3.5">{remaining}h</td>
+                    <td className="px-5 py-3.5">{Number(pack.pricePerHour).toLocaleString("fr-FR")} €</td>
+                    <td className="px-5 py-3.5">
                       {pack.expiresAt ? pack.expiresAt.toLocaleDateString("fr-FR") : "—"}
                     </td>
-                    <td className="px-4 py-3">
-                      <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLES[pack.status]}`}>
+                    <td className="px-5 py-3.5">
+                      <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[pack.status]}`}>
                         {STATUS_LABELS[pack.status]}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-5 py-3.5">
                       {pack.status === "ACTIVE" ? (
                         <ConsumeButton packageId={pack.id} companyId={membership.companyId} />
                       ) : null}

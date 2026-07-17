@@ -15,7 +15,7 @@ export default async function DashboardPage() {
   return (
     <div>
       <header className="mb-8">
-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+        <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
           Tableau de bord
         </h1>
         <p className="text-sm text-[var(--color-ink-soft)] mt-1">
@@ -38,7 +38,7 @@ export default async function DashboardPage() {
         <KpiCard label="Propriétaires" value={String(metrics.nombreProprietaires)} />
       </section>
 
-      <section className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-6">
+      <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-6">
         <h2 className="font-[family-name:var(--font-display)] text-lg mb-4">Revenus par mois</h2>
         {metrics.revenueByMonth.length === 0 ? (
           <p className="text-sm text-[var(--color-ink-soft)]">

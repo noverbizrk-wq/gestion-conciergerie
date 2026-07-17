@@ -22,7 +22,7 @@ export default async function OwnerDetailPage({ params }: { params: Promise<{ id
       </Link>
 
       <header className="mt-2 mb-6">
-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+        <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
           {owner.firstName} {owner.lastName}
         </h1>
       </header>
@@ -45,7 +45,7 @@ export default async function OwnerDetailPage({ params }: { params: Promise<{ id
           />
         </div>
 
-        <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-5">
+        <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
           <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-3">
             Logements ({owner.properties.length})
           </h2>

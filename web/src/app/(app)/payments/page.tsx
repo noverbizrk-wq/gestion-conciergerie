@@ -29,7 +29,7 @@ export default async function PaymentsPage() {
   return (
     <div>
       <header className="mb-6">
-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+        <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
           Encaissements
         </h1>
         <p className="text-sm text-[var(--color-ink-soft)] mt-1">
@@ -44,16 +44,16 @@ export default async function PaymentsPage() {
         <KpiCard label="Transactions échouées" value={String(kpis.transactionsEchouees)} tone="danger" />
       </section>
 
-      <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
+      <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden">
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+          <thead className="bg-[var(--color-paper)] text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] border-b border-[var(--color-line)]">
             <tr>
-              <th className="px-4 py-3">Client</th>
-              <th className="px-4 py-3">Facture</th>
-              <th className="px-4 py-3">Montant</th>
-              <th className="px-4 py-3">Méthode</th>
-              <th className="px-4 py-3">Payé le</th>
-              <th className="px-4 py-3">Statut</th>
+              <th className="px-5 py-3.5">Client</th>
+              <th className="px-5 py-3.5">Facture</th>
+              <th className="px-5 py-3.5">Montant</th>
+              <th className="px-5 py-3.5">Méthode</th>
+              <th className="px-5 py-3.5">Payé le</th>
+              <th className="px-5 py-3.5">Statut</th>
             </tr>
           </thead>
           <tbody>
@@ -65,18 +65,18 @@ export default async function PaymentsPage() {
               </tr>
             ) : (
               payments.map((payment) => (
-                <tr key={payment.id} className="border-t border-[var(--color-line)]">
-                  <td className="px-4 py-3">
+                <tr key={payment.id} className="border-t border-[var(--color-line)] transition-colors hover:bg-[var(--color-paper)]">
+                  <td className="px-5 py-3.5">
                     {payment.invoice.owner.firstName} {payment.invoice.owner.lastName}
                   </td>
-                  <td className="px-4 py-3">{payment.invoice.number}</td>
-                  <td className="px-4 py-3">{Number(payment.amount).toLocaleString("fr-FR")} €</td>
-                  <td className="px-4 py-3">{payment.method}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-5 py-3.5">{payment.invoice.number}</td>
+                  <td className="px-5 py-3.5">{Number(payment.amount).toLocaleString("fr-FR")} €</td>
+                  <td className="px-5 py-3.5">{payment.method}</td>
+                  <td className="px-5 py-3.5">
                     {payment.paidAt ? payment.paidAt.toLocaleDateString("fr-FR") : "—"}
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={`rounded-full px-2 py-0.5 text-xs ${STATUS_STYLES[payment.status]}`}>
+                  <td className="px-5 py-3.5">
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-medium ${STATUS_STYLES[payment.status]}`}>
                       {STATUS_LABELS[payment.status]}
                     </span>
                   </td>

@@ -18,7 +18,7 @@ export function ConsumeButton({ packageId, companyId }: { packageId: string; com
         step="0.5"
         value={hours}
         onChange={(e) => setHours(Number(e.target.value))}
-        className="w-16 rounded-md border border-[var(--color-line)] bg-white px-2 py-1 text-xs"
+        className="w-16 rounded-lg border border-[var(--color-line)] bg-white px-2 py-1 text-xs"
       />
       <button
         type="button"
@@ -34,7 +34,7 @@ export function ConsumeButton({ packageId, companyId }: { packageId: string; com
             }
           });
         }}
-        className="rounded-md border border-[var(--color-line)] text-xs px-2 py-1 hover:border-[var(--color-brass)] transition-colors disabled:opacity-50"
+        className="rounded-lg border border-[var(--color-line)] text-xs px-2 py-1 hover:border-[var(--color-brass)] transition-colors disabled:opacity-50"
       >
         Consommer
       </button>

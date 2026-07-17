@@ -29,7 +29,7 @@ export default async function NewQuotePage() {
       </Link>
 
       <header className="mt-2 mb-6">
-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">Nouveau devis</h1>
+        <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">Nouveau devis</h1>
       </header>
 
       {owners.length === 0 ? (

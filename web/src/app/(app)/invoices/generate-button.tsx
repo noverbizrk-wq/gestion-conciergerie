@@ -24,7 +24,7 @@ export function GenerateInvoicesButton({ companyId }: { companyId: string }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-md bg-[var(--color-brass)] text-white text-sm px-4 py-2 hover:bg-[var(--color-brass-dark)] transition-colors"
+        className="rounded-lg bg-[var(--color-brass)] text-white text-sm font-medium px-4 py-2 shadow-sm hover:bg-[var(--color-brass-dark)] transition-all active:scale-[0.98]"
       >
         Générer les factures du mois
       </button>
@@ -32,11 +32,11 @@ export function GenerateInvoicesButton({ companyId }: { companyId: string }) {
   }
 
   return (
-    <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-4 flex items-center gap-3">
+    <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-4 flex items-center gap-3">
       <select
         value={month}
         onChange={(e) => setMonth(Number(e.target.value))}
-        className="rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+        className="rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm transition-colors focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
       >
         {MONTHS.map((label, i) => (
           <option key={i} value={i + 1}>
@@ -48,7 +48,7 @@ export function GenerateInvoicesButton({ companyId }: { companyId: string }) {
         type="number"
         value={year}
         onChange={(e) => setYear(Number(e.target.value))}
-        className="w-24 rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+        className="w-24 rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm transition-colors focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
       />
       <button
         type="button"
@@ -68,7 +68,7 @@ export function GenerateInvoicesButton({ companyId }: { companyId: string }) {
             }
           });
         }}
-        className="rounded-md bg-[var(--color-ink)] text-white text-sm px-4 py-2 hover:bg-[var(--color-ink)]/90 transition-colors disabled:opacity-50"
+        className="rounded-lg bg-[var(--color-ink)] text-white text-sm font-medium px-4 py-2 shadow-sm hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50"
       >
         {isPending ? "Génération..." : "Lancer"}
       </button>

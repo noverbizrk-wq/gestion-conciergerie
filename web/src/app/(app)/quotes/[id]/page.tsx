@@ -41,7 +41,7 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
 
       <header className="mt-2 mb-6 flex items-start justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+          <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
             Devis {quotation.number}
           </h1>
           <p className="text-sm text-[var(--color-ink-soft)] mt-1">
@@ -72,28 +72,28 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
         />
       </div>
 
-      <section className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
+      <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden">
         <div className="px-5 py-3 border-b border-[var(--color-line)]">
           <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)]">Lignes du devis</h2>
         </div>
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+          <thead className="bg-[var(--color-paper)] text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] border-b border-[var(--color-line)]">
             <tr>
-              <th className="px-4 py-3">Désignation</th>
-              <th className="px-4 py-3">Quantité</th>
-              <th className="px-4 py-3">TVA</th>
-              <th className="px-4 py-3">Prix unit. HT</th>
-              <th className="px-4 py-3">Montant HT</th>
+              <th className="px-5 py-3.5">Désignation</th>
+              <th className="px-5 py-3.5">Quantité</th>
+              <th className="px-5 py-3.5">TVA</th>
+              <th className="px-5 py-3.5">Prix unit. HT</th>
+              <th className="px-5 py-3.5">Montant HT</th>
             </tr>
           </thead>
           <tbody>
             {quotation.lines.map((line) => (
-              <tr key={line.id} className="border-t border-[var(--color-line)]">
-                <td className="px-4 py-3">{line.description}</td>
-                <td className="px-4 py-3">{Number(line.quantity)}</td>
-                <td className="px-4 py-3">{Number(line.vatRate)}%</td>
-                <td className="px-4 py-3">{Number(line.unitPriceHT).toLocaleString("fr-FR")} €</td>
-                <td className="px-4 py-3">{Number(line.lineTotalHT).toLocaleString("fr-FR")} €</td>
+              <tr key={line.id} className="border-t border-[var(--color-line)] transition-colors hover:bg-[var(--color-paper)]">
+                <td className="px-5 py-3.5">{line.description}</td>
+                <td className="px-5 py-3.5">{Number(line.quantity)}</td>
+                <td className="px-5 py-3.5">{Number(line.vatRate)}%</td>
+                <td className="px-5 py-3.5">{Number(line.unitPriceHT).toLocaleString("fr-FR")} €</td>
+                <td className="px-5 py-3.5">{Number(line.lineTotalHT).toLocaleString("fr-FR")} €</td>
               </tr>
             ))}
           </tbody>
@@ -105,7 +105,7 @@ export default async function QuoteDetailPage({ params }: { params: Promise<{ id
 
 function InfoBlock({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] px-5 py-4">
+    <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm px-5 py-4">
       <p className="text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">{label}</p>
       <p
         className={`mt-2 font-[family-name:var(--font-display)] text-2xl ${

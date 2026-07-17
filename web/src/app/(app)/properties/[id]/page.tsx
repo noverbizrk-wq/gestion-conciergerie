@@ -22,7 +22,7 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
       </Link>
 
       <header className="mt-2 mb-6">
-        <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">{property.name}</h1>
+        <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">{property.name}</h1>
         <p className="text-sm text-[var(--color-ink-soft)] mt-1">
           Propriétaire :{" "}
           <Link href={`/owners/${property.owner.id}`} className="text-[var(--color-brass-dark)] hover:underline">
@@ -49,7 +49,7 @@ export default async function PropertyDetailPage({ params }: { params: Promise<{
           />
         </div>
 
-        <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-5">
+        <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
           <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-3">
             Dernières réservations
           </h2>

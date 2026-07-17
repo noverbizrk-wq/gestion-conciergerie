@@ -2,6 +2,8 @@ import Link from "next/link";
 import { LayoutDashboard, Users, Home, FileText, FileSignature, Upload, Sparkles, CalendarDays, Wallet, Settings, Star, Clock } from "lucide-react";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { SignOutButton } from "@/components/sign-out-button";
+import { SidebarNav } from "@/components/sidebar-nav";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
@@ -29,32 +31,37 @@ export async function Sidebar() {
   const membership = await getCurrentUserMembership();
 
   return (
-    <aside className="w-64 shrink-0 border-r border-[var(--color-line)] bg-[var(--color-paper-raised)] flex flex-col">
-      <div className="px-6 py-6 border-b border-[var(--color-line)]">
-        <p className="font-[family-name:var(--font-display)] italic text-xl text-[var(--color-ink)]">
-          Nover<span className="text-[var(--color-brass)] not-italic"> Invoice</span>
-        </p>
-        <p className="text-xs text-[var(--color-ink-soft)] mt-1">Conciergerie & facturation</p>
-      </div>
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        {NAV_ITEMS.map(({ href, label, icon: Icon }) => (
-          <Link
-            key={href}
-            href={href}
-            className="flex items-center gap-3 rounded-md px-3 py-2 text-sm text-[var(--color-ink-soft)] hover:bg-[var(--color-paper)] hover:text-[var(--color-ink)] transition-colors"
-          >
-            <Icon size={16} strokeWidth={1.75} />
-            {label}
-          </Link>
-        ))}
-      </nav>
-      {membership ? (
-        <div className="px-6 py-4 border-t border-[var(--color-line)]">
-          <p className="text-sm font-medium text-[var(--color-ink)]">{membership.user?.name ?? membership.user?.email}</p>
-          <p className="text-xs text-[var(--color-ink-soft)] mb-2">
-            {ROLE_LABELS[membership.role] ?? membership.role} · {membership.company.name}
+    <aside className="w-64 shrink-0 border-r border-[var(--color-line)] bg-[var(--color-paper-raised)] flex flex-col h-screen sticky top-0">
+      <div className="flex items-center justify-between px-5 py-5 border-b border-[var(--color-line)]">
+        <Link href="/dashboard" className="min-w-0">
+          <p className="font-[family-name:var(--font-display)] italic text-lg text-[var(--color-ink)] truncate">
+            Nover<span className="text-[var(--color-brass)] not-italic"> Invoice</span>
           </p>
-          <SignOutButton />
+          <p className="text-[11px] text-[var(--color-ink-soft)] mt-0.5">Conciergerie & facturation</p>
+        </Link>
+        <ThemeToggle />
+      </div>
+
+      <SidebarNav items={NAV_ITEMS} />
+
+      {membership ? (
+        <div className="px-4 py-4 border-t border-[var(--color-line)]">
+          <div className="flex items-center gap-3 rounded-lg px-2 py-2 hover:bg-[var(--color-paper)] transition-colors">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[var(--color-brass)]/15 text-xs font-semibold text-[var(--color-brass-dark)]">
+              {(membership.user?.name ?? membership.user?.email ?? "?").slice(0, 2).toUpperCase()}
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="text-sm font-medium text-[var(--color-ink)] truncate">
+                {membership.user?.name ?? membership.user?.email}
+              </p>
+              <p className="text-[11px] text-[var(--color-ink-soft)] truncate">
+                {ROLE_LABELS[membership.role] ?? membership.role} · {membership.company.name}
+              </p>
+            </div>
+          </div>
+          <div className="mt-1 px-2">
+            <SignOutButton />
+          </div>
         </div>
       ) : null}
     </aside>

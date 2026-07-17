@@ -21,7 +21,7 @@ export function ReviewActions({ reviewId, companyId }: { reviewId: string; compa
         type="button"
         disabled={isPending}
         onClick={() => setStatus("PUBLISHED")}
-        className="rounded-md bg-[var(--color-success)] text-white text-xs px-3 py-1.5 hover:opacity-90 transition-opacity disabled:opacity-50"
+        className="rounded-lg bg-[var(--color-success)] text-white text-xs px-3 py-1.5 hover:opacity-90 transition-opacity disabled:opacity-50"
       >
         Publier
       </button>
@@ -29,7 +29,7 @@ export function ReviewActions({ reviewId, companyId }: { reviewId: string; compa
         type="button"
         disabled={isPending}
         onClick={() => setStatus("REJECTED")}
-        className="rounded-md border border-[var(--color-danger)] text-[var(--color-danger)] text-xs px-3 py-1.5 hover:bg-[var(--color-danger)]/5 transition-colors disabled:opacity-50"
+        className="rounded-lg border border-[var(--color-danger)] text-[var(--color-danger)] text-xs px-3 py-1.5 hover:bg-[var(--color-danger)]/5 transition-colors disabled:opacity-50"
       >
         Rejeter
       </button>

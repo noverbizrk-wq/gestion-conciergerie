@@ -41,7 +41,7 @@ export default async function PlanningPage({
     <div>
       <header className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+          <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
             Planning
           </h1>
           <p className="text-sm text-[var(--color-ink-soft)] mt-1">
@@ -51,13 +51,13 @@ export default async function PlanningPage({
         <div className="flex items-center gap-2">
           <Link
             href={`/planning?week=${prevWeek}`}
-            className="rounded-md border border-[var(--color-line)] bg-[var(--color-paper-raised)] text-sm px-3 py-2 hover:border-[var(--color-brass)] transition-colors"
+            className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] text-sm px-3 py-2 hover:border-[var(--color-brass)] transition-colors"
           >
             ← Semaine précédente
           </Link>
           <Link
             href={`/planning?week=${nextWeek}`}
-            className="rounded-md border border-[var(--color-line)] bg-[var(--color-paper-raised)] text-sm px-3 py-2 hover:border-[var(--color-brass)] transition-colors"
+            className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] text-sm px-3 py-2 hover:border-[var(--color-brass)] transition-colors"
           >
             Semaine suivante →
           </Link>
@@ -68,7 +68,7 @@ export default async function PlanningPage({
         {days.map((day) => {
           const dayEvents = events.filter((e) => isSameDay(e.date, day));
           return (
-            <div key={day.toISOString()} className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] flex flex-col min-h-[220px]">
+            <div key={day.toISOString()} className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm flex flex-col min-h-[220px]">
               <div className="px-3 py-2 border-b border-[var(--color-line)] text-center">
                 <p className="text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
                   {format(day, "EEEE", { locale: fr })}
@@ -84,7 +84,7 @@ export default async function PlanningPage({
                   dayEvents.map((event) => (
                     <div
                       key={event.id}
-                      className={`rounded-md border px-2 py-1.5 text-xs ${KIND_STYLES[event.kind]}`}
+                      className={`rounded-lg border px-2 py-1.5 text-xs ${KIND_STYLES[event.kind]}`}
                     >
                       <p className="font-medium">{KIND_LABELS[event.kind]}</p>
                       <p>{event.propertyName}</p>

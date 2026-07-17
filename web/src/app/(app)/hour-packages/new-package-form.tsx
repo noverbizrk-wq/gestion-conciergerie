@@ -21,7 +21,7 @@ export function NewPackageForm({ companyId, owners }: { companyId: string; owner
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-md bg-[var(--color-brass)] text-white text-sm px-4 py-2 hover:bg-[var(--color-brass-dark)] transition-colors"
+        className="rounded-lg bg-[var(--color-brass)] text-white text-sm font-medium px-4 py-2 shadow-sm hover:bg-[var(--color-brass-dark)] transition-all active:scale-[0.98]"
       >
         Nouveau pack d&apos;heures
       </button>
@@ -29,12 +29,12 @@ export function NewPackageForm({ companyId, owners }: { companyId: string; owner
   }
 
   return (
-    <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-5 mb-6 space-y-3">
+    <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5 mb-6 space-y-3">
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3">
         <select
           value={ownerId}
           onChange={(e) => setOwnerId(e.target.value)}
-          className="rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+          className="rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm transition-colors focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
         >
           {owners.map((o) => (
             <option key={o.id} value={o.id}>
@@ -49,7 +49,7 @@ export function NewPackageForm({ companyId, owners }: { companyId: string; owner
           placeholder="Heures"
           value={totalHours}
           onChange={(e) => setTotalHours(Number(e.target.value))}
-          className="rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+          className="rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm transition-colors focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
         />
         <input
           type="number"
@@ -58,13 +58,13 @@ export function NewPackageForm({ companyId, owners }: { companyId: string; owner
           placeholder="Prix / heure HT"
           value={pricePerHour}
           onChange={(e) => setPricePerHour(Number(e.target.value))}
-          className="rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+          className="rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm transition-colors focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
         />
         <input
           type="date"
           value={expiresAt}
           onChange={(e) => setExpiresAt(e.target.value)}
-          className="rounded-md border border-[var(--color-line)] bg-white px-3 py-2 text-sm"
+          className="rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm transition-colors focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
         />
       </div>
       {error ? <p className="text-xs text-[var(--color-danger)]">{error}</p> : null}
@@ -90,7 +90,7 @@ export function NewPackageForm({ companyId, owners }: { companyId: string; owner
               }
             });
           }}
-          className="rounded-md bg-[var(--color-ink)] text-white text-sm px-4 py-2 hover:bg-[var(--color-ink)]/90 transition-colors disabled:opacity-50"
+          className="rounded-lg bg-[var(--color-ink)] text-white text-sm font-medium px-4 py-2 shadow-sm hover:opacity-90 transition-all active:scale-[0.98] disabled:opacity-50"
         >
           {isPending ? "Création..." : "Créer le pack"}
         </button>

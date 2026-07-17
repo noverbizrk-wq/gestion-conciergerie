@@ -84,28 +84,28 @@ export function ImportForm({ companyId, properties }: { companyId: string; prope
       ) : null}
 
       {preview && preview.length > 0 ? (
-        <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
+        <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden">
           <table className="w-full text-sm">
-            <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+            <thead className="bg-[var(--color-paper)] text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] border-b border-[var(--color-line)]">
               <tr>
-                <th className="px-4 py-3">Annonce (CSV)</th>
-                <th className="px-4 py-3">Logement rapproché</th>
-                <th className="px-4 py-3">Arrivée</th>
-                <th className="px-4 py-3">Départ</th>
-                <th className="px-4 py-3">Montant brut</th>
+                <th className="px-5 py-3.5">Annonce (CSV)</th>
+                <th className="px-5 py-3.5">Logement rapproché</th>
+                <th className="px-5 py-3.5">Arrivée</th>
+                <th className="px-5 py-3.5">Départ</th>
+                <th className="px-5 py-3.5">Montant brut</th>
               </tr>
             </thead>
             <tbody>
               {preview.map((row) => (
-                <tr key={row.externalId} className="border-t border-[var(--color-line)]">
-                  <td className="px-4 py-3">{row.propertyNameRaw}</td>
-                  <td className="px-4 py-3">
+                <tr key={row.externalId} className="border-t border-[var(--color-line)] transition-colors hover:bg-[var(--color-paper)]">
+                  <td className="px-5 py-3.5">{row.propertyNameRaw}</td>
+                  <td className="px-5 py-3.5">
                     <select
                       value={mapping[row.externalId] ?? ""}
                       onChange={(e) =>
                         setMapping((prev) => ({ ...prev, [row.externalId]: e.target.value }))
                       }
-                      className={`rounded-md border px-2 py-1 text-xs ${
+                      className={`rounded-lg border px-2 py-1 text-xs ${
                         mapping[row.externalId] ? "border-[var(--color-line)]" : "border-[var(--color-danger)]"
                       }`}
                     >
@@ -117,14 +117,14 @@ export function ImportForm({ companyId, properties }: { companyId: string; prope
                       ))}
                     </select>
                   </td>
-                  <td className="px-4 py-3">{new Date(row.checkIn).toLocaleDateString("fr-FR")}</td>
-                  <td className="px-4 py-3">{new Date(row.checkOut).toLocaleDateString("fr-FR")}</td>
-                  <td className="px-4 py-3">{row.grossAmount.toLocaleString("fr-FR")} €</td>
+                  <td className="px-5 py-3.5">{new Date(row.checkIn).toLocaleDateString("fr-FR")}</td>
+                  <td className="px-5 py-3.5">{new Date(row.checkOut).toLocaleDateString("fr-FR")}</td>
+                  <td className="px-5 py-3.5">{row.grossAmount.toLocaleString("fr-FR")} €</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          <div className="px-4 py-3 border-t border-[var(--color-line)] flex items-center justify-between">
+          <div className="px-5 py-3.5 border-t border-[var(--color-line)] flex items-center justify-between">
             <p className="text-xs text-[var(--color-ink-soft)]">
               {unresolvedCount > 0
                 ? `${unresolvedCount} ligne(s) sans logement rapproché — complète le mapping avant de confirmer.`
@@ -143,7 +143,7 @@ export function ImportForm({ companyId, properties }: { companyId: string; prope
                   }
                 });
               }}
-              className="rounded-md bg-[var(--color-brass)] text-white text-sm px-4 py-2 hover:bg-[var(--color-brass-dark)] transition-colors disabled:opacity-50"
+              className="rounded-lg bg-[var(--color-brass)] text-white text-sm font-medium px-4 py-2 shadow-sm hover:bg-[var(--color-brass-dark)] transition-all active:scale-[0.98] disabled:opacity-50"
             >
               {isPending ? "Import..." : "Confirmer l'import"}
             </button>

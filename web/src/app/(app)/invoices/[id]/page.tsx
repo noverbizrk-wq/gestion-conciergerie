@@ -39,7 +39,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
 
       <header className="mt-2 mb-6 flex items-start justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-display)] text-3xl text-[var(--color-ink)]">
+          <h1 className="font-[family-name:var(--font-display)] text-3xl tracking-tight text-[var(--color-ink)]">
             Facture {invoice.number}
           </h1>
           <p className="text-sm text-[var(--color-ink-soft)] mt-1">
@@ -57,7 +57,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
           <a
             href={`/api/invoices/${invoice.id}/pdf?companyId=${membership.companyId}`}
             target="_blank"
-            className="rounded-md border border-[var(--color-line)] bg-[var(--color-paper-raised)] text-sm px-4 py-2 hover:border-[var(--color-brass)] transition-colors"
+            className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] text-sm font-medium px-4 py-2 shadow-sm hover:border-[var(--color-brass)] hover:text-[var(--color-brass-dark)] transition-all"
           >
             Voir le PDF
           </a>
@@ -74,20 +74,20 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
         />
       </div>
 
-      <section className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden mb-6">
+      <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden mb-6">
         <div className="px-5 py-3 border-b border-[var(--color-line)]">
           <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)]">
             Prestations référencées
           </h2>
         </div>
         <table className="w-full text-sm">
-          <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+          <thead className="bg-[var(--color-paper)] text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] border-b border-[var(--color-line)]">
             <tr>
-              <th className="px-4 py-3">Désignation</th>
-              <th className="px-4 py-3">Quantité</th>
-              <th className="px-4 py-3">TVA</th>
-              <th className="px-4 py-3">Prix unit. HT</th>
-              <th className="px-4 py-3">Montant HT</th>
+              <th className="px-5 py-3.5">Désignation</th>
+              <th className="px-5 py-3.5">Quantité</th>
+              <th className="px-5 py-3.5">TVA</th>
+              <th className="px-5 py-3.5">Prix unit. HT</th>
+              <th className="px-5 py-3.5">Montant HT</th>
             </tr>
           </thead>
           <tbody>
@@ -99,12 +99,12 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
               </tr>
             ) : (
               invoice.lines.map((line) => (
-                <tr key={line.id} className="border-t border-[var(--color-line)]">
-                  <td className="px-4 py-3">{line.description}</td>
-                  <td className="px-4 py-3">{Number(line.quantity)}</td>
-                  <td className="px-4 py-3">{Number(line.vatRate)}%</td>
-                  <td className="px-4 py-3">{Number(line.unitPriceHT).toLocaleString("fr-FR")} €</td>
-                  <td className="px-4 py-3">{Number(line.lineTotalHT).toLocaleString("fr-FR")} €</td>
+                <tr key={line.id} className="border-t border-[var(--color-line)] transition-colors hover:bg-[var(--color-paper)]">
+                  <td className="px-5 py-3.5">{line.description}</td>
+                  <td className="px-5 py-3.5">{Number(line.quantity)}</td>
+                  <td className="px-5 py-3.5">{Number(line.vatRate)}%</td>
+                  <td className="px-5 py-3.5">{Number(line.unitPriceHT).toLocaleString("fr-FR")} €</td>
+                  <td className="px-5 py-3.5">{Number(line.lineTotalHT).toLocaleString("fr-FR")} €</td>
                 </tr>
               ))
             )}
@@ -112,7 +112,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
         </table>
       </section>
 
-      <section className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">
+      <section className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm overflow-hidden">
         <div className="px-5 py-3 border-b border-[var(--color-line)]">
           <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)]">Paiements</h2>
         </div>
@@ -122,23 +122,23 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
           </p>
         ) : (
           <table className="w-full text-sm">
-            <thead className="bg-[var(--color-paper)] text-left text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">
+            <thead className="bg-[var(--color-paper)] text-left text-[11px] font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] border-b border-[var(--color-line)]">
               <tr>
-                <th className="px-4 py-3">Montant</th>
-                <th className="px-4 py-3">Méthode</th>
-                <th className="px-4 py-3">Payé le</th>
-                <th className="px-4 py-3">Statut</th>
+                <th className="px-5 py-3.5">Montant</th>
+                <th className="px-5 py-3.5">Méthode</th>
+                <th className="px-5 py-3.5">Payé le</th>
+                <th className="px-5 py-3.5">Statut</th>
               </tr>
             </thead>
             <tbody>
               {invoice.payments.map((payment) => (
-                <tr key={payment.id} className="border-t border-[var(--color-line)]">
-                  <td className="px-4 py-3">{Number(payment.amount).toLocaleString("fr-FR")} €</td>
-                  <td className="px-4 py-3">{payment.method}</td>
-                  <td className="px-4 py-3">
+                <tr key={payment.id} className="border-t border-[var(--color-line)] transition-colors hover:bg-[var(--color-paper)]">
+                  <td className="px-5 py-3.5">{Number(payment.amount).toLocaleString("fr-FR")} €</td>
+                  <td className="px-5 py-3.5">{payment.method}</td>
+                  <td className="px-5 py-3.5">
                     {payment.paidAt ? payment.paidAt.toLocaleDateString("fr-FR") : "—"}
                   </td>
-                  <td className="px-4 py-3">{payment.status}</td>
+                  <td className="px-5 py-3.5">{payment.status}</td>
                 </tr>
               ))}
             </tbody>
@@ -151,7 +151,7 @@ export default async function InvoiceDetailPage({ params }: { params: Promise<{ 
 
 function InfoBlock({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
-    <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] px-5 py-4">
+    <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm px-5 py-4">
       <p className="text-xs uppercase tracking-wide text-[var(--color-ink-soft)]">{label}</p>
       <p
         className={`mt-2 font-[family-name:var(--font-display)] text-2xl ${
