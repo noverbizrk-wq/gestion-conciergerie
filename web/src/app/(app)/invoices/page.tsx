@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listInvoicesAction } from "@/modules/invoicing/actions";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
+import { GenerateInvoicesButton } from "./generate-button";
 
 const STATUS_STYLES: Record<string, string> = {
   DRAFT: "bg-slate-100 text-slate-600",
@@ -33,9 +34,7 @@ export default async function InvoicesPage() {
             {invoices.length} facture{invoices.length > 1 ? "s" : ""} au total
           </p>
         </div>
-        <button className="rounded-md bg-[var(--color-brass)] text-white text-sm px-4 py-2 hover:bg-[var(--color-brass-dark)] transition-colors">
-          Générer les factures du mois
-        </button>
+        <GenerateInvoicesButton companyId={membership?.companyId ?? ""} />
       </header>
 
       <div className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] overflow-hidden">

@@ -29,4 +29,8 @@ export const propertiesRepository = {
       orderBy: { name: "asc" },
     });
   },
+
+  delete(id: string, companyId: string) {
+    return prisma.property.deleteMany({ where: { id, companyId } });
+  },
 };

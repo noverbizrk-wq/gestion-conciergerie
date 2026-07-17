@@ -47,3 +47,23 @@ export async function listPropertiesAction(companyId: string, ownerId?: string) 
   await requireRole(companyId, ["ADMIN", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
   return propertiesRepository.list(companyId, ownerId);
 }
+
+export async function getPropertyAction(id: string, companyId: string) {
+  await requireRole(companyId, ["ADMIN", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
+  return propertiesRepository.findById(id, companyId);
+}
+
+export async function deletePropertyAction(id: string, companyId: string) {
+  const auth = await requireRole(companyId, ["ADMIN"]);
+  await propertiesRepository.delete(id, companyId);
+
+  await writeAuditLog({
+    companyId: auth.companyId,
+    userId: auth.userId,
+    action: "PROPERTY_DELETED",
+    entityType: "Property",
+    entityId: id,
+  });
+
+  revalidatePath("/properties");
+}

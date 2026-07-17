@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { listOwnersAction } from "@/modules/owners/actions";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { OwnersToolbar } from "./owners-toolbar";
@@ -32,7 +33,9 @@ export default async function OwnersPage() {
               owners.map((owner) => (
                 <tr key={owner.id} className="border-t border-[var(--color-line)]">
                   <td className="px-4 py-3 font-medium">
-                    {owner.firstName} {owner.lastName}
+                    <Link href={`/owners/${owner.id}`} className="hover:text-[var(--color-brass-dark)] hover:underline">
+                      {owner.firstName} {owner.lastName}
+                    </Link>
                     {owner.companyName ? (
                       <span className="block text-xs text-[var(--color-ink-soft)]">{owner.companyName}</span>
                     ) : null}

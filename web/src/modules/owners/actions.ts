@@ -51,6 +51,11 @@ export async function listOwnersAction(companyId: string, search?: string) {
   return ownersRepository.list(companyId, search);
 }
 
+export async function getOwnerAction(id: string, companyId: string) {
+  await requireRole(companyId, ["ADMIN", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
+  return ownersRepository.findById(id, companyId);
+}
+
 export async function deleteOwnerAction(id: string, companyId: string) {
   const auth = await requireRole(companyId, ["ADMIN"]);
   await ownersRepository.delete(id, companyId);

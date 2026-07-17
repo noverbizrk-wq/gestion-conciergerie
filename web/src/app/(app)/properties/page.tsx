@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { listPropertiesAction } from "@/modules/properties/actions";
 import { listOwnersAction } from "@/modules/owners/actions";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
@@ -36,9 +37,10 @@ export default async function PropertiesPage() {
           </p>
         ) : (
           properties.map((property) => (
-            <div
+            <Link
               key={property.id}
-              className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-5"
+              href={`/properties/${property.id}`}
+              className="rounded-lg border border-[var(--color-line)] bg-[var(--color-paper-raised)] p-5 hover:border-[var(--color-brass)] transition-colors block"
             >
               <div className="flex items-center justify-between">
                 <h3 className="font-medium">{property.name}</h3>
@@ -59,7 +61,7 @@ export default async function PropertiesPage() {
                     : "Commission variable"}
                 </span>
               </div>
-            </div>
+            </Link>
           ))
         )}
       </div>
