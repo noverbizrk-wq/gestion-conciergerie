@@ -8,7 +8,7 @@ const NAV_ITEMS = [
   { href: "/planning", label: "Planning", icon: CalendarDays },
   { href: "/owners", label: "Propriétaires", icon: Users },
   { href: "/properties", label: "Logements", icon: Home },
-  { href: "/bookings", label: "Import réservations", icon: Upload },
+  { href: "/bookings", label: "Réservations", icon: Upload },
   { href: "/invoices", label: "Factures", icon: FileText },
   { href: "/assistant", label: "Assistant IA", icon: Sparkles },
 ];

@@ -4,6 +4,7 @@ import { requireRole } from "@/lib/auth-guard";
 import { writeAuditLog } from "@/lib/audit-log";
 import { parseAirbnbCsv } from "./airbnb-csv-parser";
 import { matchPropertyByName, persistBookings } from "./repository";
+import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
 export interface ImportPreviewRow {
@@ -82,4 +83,66 @@ export async function confirmImportAction(
 
   revalidatePath("/bookings");
   return result;
+}
+
+
+export async function listBookingsAction(companyId: string) {
+  await requireRole(companyId, ["ADMIN", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
+  return prisma.booking.findMany({
+    where: { companyId },
+    include: { property: true },
+    orderBy: { checkIn: "desc" },
+  });
+}
+
+export async function getBookingAction(bookingId: string, companyId: string) {
+  await requireRole(companyId, ["ADMIN", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
+  const booking = await prisma.booking.findFirst({
+    where: { id: bookingId, companyId },
+    include: { property: { include: { owner: true } } },
+  });
+  if (!booking) return null;
+
+  const activity = await prisma.auditLog.findMany({
+    where: { companyId, entityType: "Booking", entityId: bookingId },
+    include: { user: true },
+    orderBy: { createdAt: "desc" },
+  });
+
+  return { booking, activity };
+}
+
+/**
+ * Changement de statut manuel d'une réservation, avec journal d'activité —
+ * équivalent de l'historique horodaté observé sur la page "Demande" du
+ * back-office de référence (Ogustine).
+ */
+export async function updateBookingStatusAction(
+  bookingId: string,
+  companyId: string,
+  status: "IMPORTED" | "INVOICED" | "IGNORED",
+  note?: string
+) {
+  const auth = await requireRole(companyId, ["ADMIN", "ACCOUNTANT"]);
+
+  const existing = await prisma.booking.findFirst({ where: { id: bookingId, companyId } });
+  if (!existing) throw new Error("Réservation introuvable");
+
+  const updated = await prisma.booking.update({
+    where: { id: bookingId },
+    data: { status },
+  });
+
+  await writeAuditLog({
+    companyId: auth.companyId,
+    userId: auth.userId,
+    action: "BOOKING_STATUS_CHANGED",
+    entityType: "Booking",
+    entityId: bookingId,
+    diff: { from: existing.status, to: status, note },
+  });
+
+  revalidatePath("/bookings");
+  revalidatePath(`/bookings/${bookingId}`);
+  return updated;
 }
