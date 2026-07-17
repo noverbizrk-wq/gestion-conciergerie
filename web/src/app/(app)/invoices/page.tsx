@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { listInvoicesAction } from "@/modules/invoicing/actions";
 import { getCurrentUserMembership } from "@/lib/auth-guard";
 
@@ -60,7 +61,11 @@ export default async function InvoicesPage() {
             ) : (
               invoices.map((invoice) => (
                 <tr key={invoice.id} className="border-t border-[var(--color-line)]">
-                  <td className="px-4 py-3 font-medium">{invoice.number}</td>
+                  <td className="px-4 py-3 font-medium">
+                    <Link href={`/invoices/${invoice.id}`} className="hover:text-[var(--color-brass-dark)] hover:underline">
+                      {invoice.number}
+                    </Link>
+                  </td>
                   <td className="px-4 py-3">
                     {invoice.owner.firstName} {invoice.owner.lastName}
                   </td>
