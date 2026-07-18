@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import {
   assignMissionAction,
   updateMissionStatusAction,
@@ -95,7 +94,6 @@ export function MissionPanel({
   const [incidentCategory, setIncidentCategory] = useState("AUTRE");
   const [incidentDescription, setIncidentDescription] = useState("");
   const [incidentReported, setIncidentReported] = useState(false);
-  const router = useRouter();
 
   return (
     <div className="space-y-6">
@@ -109,7 +107,6 @@ export function MissionPanel({
             startTransition(async () => {
               try {
                 await assignMissionAction(missionId, companyId, e.target.value || null);
-                router.refresh();
               } catch (err) {
                 setError(err instanceof Error ? err.message : "Erreur");
               }
@@ -145,7 +142,6 @@ export function MissionPanel({
                   startTransition(async () => {
                     try {
                       await updateMissionStatusAction(missionId, companyId, next);
-                      router.refresh();
                     } catch (err) {
                       setError(err instanceof Error ? err.message : "Erreur");
                     }
@@ -174,7 +170,6 @@ export function MissionPanel({
                 onChange={() => {
                   startTransition(async () => {
                     await toggleMissionTaskAction(task.id, missionId, companyId);
-                    router.refresh();
                   });
                 }}
                 className="mt-0.5"
@@ -242,7 +237,6 @@ export function MissionPanel({
                 await addMissionPhotoAction({ missionId, companyId, phase, room: room || undefined, storagePath: photoUrl });
                 setPhotoUrl("");
                 setRoom("");
-                router.refresh();
               } catch (err) {
                 setError(err instanceof Error ? err.message : "Erreur");
               }
