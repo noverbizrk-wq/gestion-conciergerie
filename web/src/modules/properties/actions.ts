@@ -44,12 +44,12 @@ export async function updatePropertyAction(rawInput: unknown) {
 }
 
 export async function listPropertiesAction(companyId: string, ownerId?: string) {
-  await requireRole(companyId, ["ADMIN", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
+  await requireRole(companyId, ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
   return propertiesRepository.list(companyId, ownerId);
 }
 
 export async function getPropertyAction(id: string, companyId: string) {
-  await requireRole(companyId, ["ADMIN", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
+  await requireRole(companyId, ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
   return propertiesRepository.findById(id, companyId);
 }
 

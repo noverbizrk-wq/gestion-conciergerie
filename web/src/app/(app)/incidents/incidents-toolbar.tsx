@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { createIncidentAction } from "@/modules/incidents/actions";
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -44,7 +43,6 @@ export function IncidentsToolbar({
   const [estimatedCost, setEstimatedCost] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const router = useRouter();
 
   return (
     <div className="mb-6">
@@ -139,7 +137,6 @@ export function IncidentsToolbar({
                     setDescription("");
                     setEstimatedCost("");
                     setOpen(false);
-                    router.refresh();
                   } catch (e) {
                     setError(e instanceof Error ? e.message : "Erreur lors du signalement");
                   }

@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { getCurrentUserMembership } from "@/lib/auth-guard";
+import { getCurrentUserMembership, getCurrentEmployeeProfile } from "@/lib/auth-guard";
 import { listIncidentsAction } from "@/modules/incidents/actions";
 import { listPropertiesAction } from "@/modules/properties/actions";
+import { listMissionsAction } from "@/modules/missions/actions";
 import { IncidentsToolbar } from "./incidents-toolbar";
 
 const CATEGORY_LABELS: Record<string, string> = {
@@ -36,26 +37,51 @@ const STATUS_STYLES: Record<string, string> = {
 
 const PROPERTY_LIST_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"];
 
+/**
+ * Pour un AGENT (intervenant), on ne peut pas lister tous les logements de la
+ * société (listPropertiesAction le lui interdit). On dérive à la place la
+ * liste des logements liés à ses missions, pour alimenter le sélecteur du
+ * formulaire "Signaler un incident".
+ */
+async function getAgentProperties(companyId: string) {
+  const employee = await getCurrentEmployeeProfile(companyId);
+  if (!employee) return [];
+  const missions = await listMissionsAction(companyId, { employeeId: employee.id });
+  const seen = new Map<string, { id: string; name: string }>();
+  for (const mission of missions) {
+    if (!seen.has(mission.property.id)) {
+      seen.set(mission.property.id, { id: mission.property.id, name: mission.property.name });
+    }
+  }
+  return Array.from(seen.values());
+}
+
 export default async function IncidentsPage() {
   const membership = await getCurrentUserMembership();
   // listPropertiesAction n'est pas ouvert au rôle AGENT (intervenant) : la
-  // liste des logements ne sert qu'au formulaire de création d'incident côté
-  // staff. Un AGENT peut lister/consulter les incidents (listIncidentsAction
-  // l'autorise) mais on ne charge pas les logements pour lui, sous peine de
-  // plantage de la page.
+  // liste complète des logements ne sert qu'au formulaire de création
+  // d'incident côté staff. Un AGENT peut lister/consulter les incidents
+  // (listIncidentsAction l'autorise) mais pour le formulaire "Signaler un
+  // incident" on lui propose uniquement les logements de ses missions —
+  // sans quoi le sélecteur de logement reste vide et bloque la création.
   const canListProperties = Boolean(membership && PROPERTY_LIST_ROLES.includes(membership.role));
-  const [incidents, properties] = membership
+  const isAgent = membership?.role === "AGENT";
+
+  const [incidents, properties, agentProperties] = membership
     ? await Promise.all([
         listIncidentsAction(membership.companyId),
         canListProperties ? listPropertiesAction(membership.companyId) : Promise.resolve([]),
+        isAgent ? getAgentProperties(membership.companyId) : Promise.resolve([]),
       ])
-    : [[], []];
+    : [[], [], []];
+
+  const availableProperties = isAgent ? agentProperties : properties;
 
   return (
     <div>
       <IncidentsToolbar
         companyId={membership?.companyId ?? ""}
-        properties={properties.map((p) => ({ id: p.id, name: p.name }))}
+        properties={availableProperties.map((p) => ({ id: p.id, name: p.name }))}
         count={incidents.length}
       />
 
