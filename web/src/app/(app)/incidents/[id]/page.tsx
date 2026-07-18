@@ -29,7 +29,13 @@ export default async function IncidentDetailPage({ params }: { params: Promise<{
   const incident = await getIncidentAction(id, membership.companyId);
   if (!incident) notFound();
 
-  const employees = await listEmployeesAction(membership.companyId);
+  // Même garde que sur la page de détail mission : listEmployeesAction est
+  // réservée aux rôles de gestion, un AGENT consultant un incident (par
+  // exemple celui qu'il vient de signaler) ne doit pas faire planter la page.
+  const MANAGE_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"];
+  const employees = MANAGE_ROLES.includes(membership.role)
+    ? await listEmployeesAction(membership.companyId)
+    : [];
 
   return (
     <div>

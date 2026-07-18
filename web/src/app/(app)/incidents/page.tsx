@@ -34,10 +34,21 @@ const STATUS_STYLES: Record<string, string> = {
   CLOSED: "bg-[var(--color-ink)]/5 text-[var(--color-ink-soft)]",
 };
 
+const PROPERTY_LIST_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"];
+
 export default async function IncidentsPage() {
   const membership = await getCurrentUserMembership();
+  // listPropertiesAction n'est pas ouvert au rôle AGENT (intervenant) : la
+  // liste des logements ne sert qu'au formulaire de création d'incident côté
+  // staff. Un AGENT peut lister/consulter les incidents (listIncidentsAction
+  // l'autorise) mais on ne charge pas les logements pour lui, sous peine de
+  // plantage de la page.
+  const canListProperties = Boolean(membership && PROPERTY_LIST_ROLES.includes(membership.role));
   const [incidents, properties] = membership
-    ? await Promise.all([listIncidentsAction(membership.companyId), listPropertiesAction(membership.companyId)])
+    ? await Promise.all([
+        listIncidentsAction(membership.companyId),
+        canListProperties ? listPropertiesAction(membership.companyId) : Promise.resolve([]),
+      ])
     : [[], []];
 
   return (

@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import {
   updateIncidentStatusAction,
   assignIncidentAction,
@@ -32,7 +31,6 @@ export function IncidentPanel({
 }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
-  const router = useRouter();
 
   return (
     <div className="space-y-6">
@@ -45,7 +43,6 @@ export function IncidentPanel({
             startTransition(async () => {
               try {
                 await assignIncidentAction(incidentId, companyId, e.target.value || null);
-                router.refresh();
               } catch (err) {
                 setError(err instanceof Error ? err.message : "Erreur");
               }
@@ -79,8 +76,7 @@ export function IncidentPanel({
                   startTransition(async () => {
                     try {
                       await updateIncidentStatusAction(incidentId, companyId, next);
-                      router.refresh();
-                    } catch (err) {
+                          } catch (err) {
                       setError(err instanceof Error ? err.message : "Erreur");
                     }
                   });
@@ -105,8 +101,7 @@ export function IncidentPanel({
               startTransition(async () => {
                 try {
                   await createMaintenanceMissionAction(incidentId, companyId);
-                  router.refresh();
-                } catch (err) {
+                  } catch (err) {
                   setError(err instanceof Error ? err.message : "Erreur");
                 }
               });

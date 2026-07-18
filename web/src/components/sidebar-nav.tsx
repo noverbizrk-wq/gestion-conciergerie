@@ -22,32 +22,42 @@ import {
   ListChecks,
 } from "lucide-react";
 
-const NAV_ITEMS = [
-  { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
-  { href: "/planning", label: "Planning", icon: CalendarDays },
-  { href: "/missions", label: "Missions", icon: ClipboardCheck },
-  { href: "/my-missions", label: "Mes missions", icon: ListChecks },
-  { href: "/incidents", label: "Incidents", icon: AlertTriangle },
-  { href: "/owners", label: "Propriétaires", icon: Users },
-  { href: "/properties", label: "Logements", icon: Home },
-  { href: "/employees", label: "Intervenants", icon: UserCheck },
-  { href: "/bookings", label: "Réservations", icon: Upload },
-  { href: "/quotes", label: "Devis", icon: FileSignature },
-  { href: "/invoices", label: "Factures", icon: FileText },
-  { href: "/payments", label: "Encaissements", icon: Wallet },
-  { href: "/reviews", label: "Avis clients", icon: Star },
-  { href: "/hour-packages", label: "Packs d'heures", icon: Clock },
-  { href: "/assistant", label: "Assistant IA", icon: Sparkles },
-  { href: "/team", label: "Équipe", icon: UsersRound },
-  { href: "/settings", label: "Paramètres & Services", icon: Settings },
+type Role = "ADMIN" | "ACCOUNTANT" | "EMPLOYEE" | "READONLY" | "SUPER_ADMIN" | "OPERATIONAL_MANAGER" | "AGENT";
+
+const MANAGEMENT_ROLES: Role[] = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "EMPLOYEE", "READONLY"];
+
+// Chaque entrée déclare les rôles autorisés à la voir dans le menu. Un AGENT
+// (intervenant terrain) n'a accès qu'à son propre espace ("Mes missions") et
+// au signalement/consultation d'incidents ; le reste du back-office (finance,
+// propriétaires, équipe...) ne lui est pas ouvert côté server actions, donc on
+// ne l'affiche pas non plus dans le menu pour éviter des pages qui échouent.
+const NAV_ITEMS: { href: string; label: string; icon: typeof LayoutDashboard; roles: Role[] }[] = [
+  { href: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard, roles: MANAGEMENT_ROLES },
+  { href: "/planning", label: "Planning", icon: CalendarDays, roles: MANAGEMENT_ROLES },
+  { href: "/missions", label: "Missions", icon: ClipboardCheck, roles: MANAGEMENT_ROLES },
+  { href: "/my-missions", label: "Mes missions", icon: ListChecks, roles: [...MANAGEMENT_ROLES, "AGENT"] },
+  { href: "/incidents", label: "Incidents", icon: AlertTriangle, roles: [...MANAGEMENT_ROLES, "AGENT"] },
+  { href: "/owners", label: "Propriétaires", icon: Users, roles: MANAGEMENT_ROLES },
+  { href: "/properties", label: "Logements", icon: Home, roles: MANAGEMENT_ROLES },
+  { href: "/employees", label: "Intervenants", icon: UserCheck, roles: MANAGEMENT_ROLES },
+  { href: "/bookings", label: "Réservations", icon: Upload, roles: MANAGEMENT_ROLES },
+  { href: "/quotes", label: "Devis", icon: FileSignature, roles: MANAGEMENT_ROLES },
+  { href: "/invoices", label: "Factures", icon: FileText, roles: MANAGEMENT_ROLES },
+  { href: "/payments", label: "Encaissements", icon: Wallet, roles: MANAGEMENT_ROLES },
+  { href: "/reviews", label: "Avis clients", icon: Star, roles: MANAGEMENT_ROLES },
+  { href: "/hour-packages", label: "Packs d'heures", icon: Clock, roles: MANAGEMENT_ROLES },
+  { href: "/assistant", label: "Assistant IA", icon: Sparkles, roles: MANAGEMENT_ROLES },
+  { href: "/team", label: "Équipe", icon: UsersRound, roles: MANAGEMENT_ROLES },
+  { href: "/settings", label: "Paramètres & Services", icon: Settings, roles: MANAGEMENT_ROLES },
 ];
 
-export function SidebarNav() {
+export function SidebarNav({ role }: { role: string | null }) {
   const pathname = usePathname();
+  const items = NAV_ITEMS.filter((item) => !role || item.roles.includes(role as Role));
 
   return (
     <nav className="flex-1 overflow-y-auto px-3 py-4 space-y-0.5">
-      {NAV_ITEMS.map(({ href, label, icon: Icon }) => {
+      {items.map(({ href, label, icon: Icon }) => {
         const isActive = pathname === href || pathname.startsWith(`${href}/`);
         return (
           <Link

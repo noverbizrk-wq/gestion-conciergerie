@@ -9,6 +9,9 @@ const ROLE_LABELS: Record<string, string> = {
   ACCOUNTANT: "Comptable",
   EMPLOYEE: "Employé",
   READONLY: "Lecture seule",
+  SUPER_ADMIN: "Super admin",
+  OPERATIONAL_MANAGER: "Responsable opérationnel",
+  AGENT: "Intervenant",
 };
 
 export async function Sidebar() {
@@ -26,7 +29,7 @@ export async function Sidebar() {
         <ThemeToggle />
       </div>
 
-      <SidebarNav />
+      <SidebarNav role={membership?.role ?? null} />
 
       {membership ? (
         <div className="px-4 py-4 border-t border-[var(--color-line)]">
