@@ -32,10 +32,17 @@ export default async function IncidentDetailPage({ params }: { params: Promise<{
   // Même garde que sur la page de détail mission : listEmployeesAction est
   // réservée aux rôles de gestion, un AGENT consultant un incident (par
   // exemple celui qu'il vient de signaler) ne doit pas faire planter la page.
-  const MANAGE_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"];
-  const employees = MANAGE_ROLES.includes(membership.role)
+  const EMPLOYEE_LIST_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"];
+  const employees = EMPLOYEE_LIST_ROLES.includes(membership.role)
     ? await listEmployeesAction(membership.companyId)
     : [];
+
+  // assignIncidentAction / updateIncidentStatusAction / createMaintenanceMissionAction
+  // sont réservées à ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER"] (pas AGENT) :
+  // un intervenant consultant l'incident qu'il a signalé doit voir un panneau en
+  // lecture seule plutôt que des boutons qui échoueront systématiquement.
+  const INCIDENT_MANAGE_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER"];
+  const canManage = INCIDENT_MANAGE_ROLES.includes(membership.role);
 
   return (
     <div>
@@ -66,6 +73,7 @@ export default async function IncidentDetailPage({ params }: { params: Promise<{
           responsibleEmployeeId={incident.responsibleEmployeeId}
           employees={employees.map((e) => ({ id: e.id, firstName: e.firstName, lastName: e.lastName }))}
           hasMaintenanceMission={incident.missions.length > 0}
+          canManage={canManage}
         />
       </div>
     </div>

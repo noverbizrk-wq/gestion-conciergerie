@@ -73,6 +73,7 @@ export function MissionPanel({
   tasks,
   photos,
   transitions,
+  canAssign,
 }: {
   missionId: string;
   companyId: string;
@@ -84,6 +85,7 @@ export function MissionPanel({
   tasks: Task[];
   photos: Photo[];
   transitions: string[];
+  canAssign: boolean;
 }) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
@@ -97,31 +99,33 @@ export function MissionPanel({
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
-        <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-3">Affectation</h2>
-        <select
-          defaultValue={employeeId ?? ""}
-          disabled={isPending}
-          onChange={(e) => {
-            setError(null);
-            startTransition(async () => {
-              try {
-                await assignMissionAction(missionId, companyId, e.target.value || null);
-              } catch (err) {
-                setError(err instanceof Error ? err.message : "Erreur");
-              }
-            });
-          }}
-          className="w-full rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
-        >
-          <option value="">Non affectée</option>
-          {employees.map((e) => (
-            <option key={e.id} value={e.id}>
-              {e.firstName} {e.lastName}
-            </option>
-          ))}
-        </select>
-      </div>
+      {canAssign ? (
+        <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
+          <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-3">Affectation</h2>
+          <select
+            defaultValue={employeeId ?? ""}
+            disabled={isPending}
+            onChange={(e) => {
+              setError(null);
+              startTransition(async () => {
+                try {
+                  await assignMissionAction(missionId, companyId, e.target.value || null);
+                } catch (err) {
+                  setError(err instanceof Error ? err.message : "Erreur");
+                }
+              });
+            }}
+            className="w-full rounded-lg border border-[var(--color-line)] bg-white px-3 py-2 text-sm focus:outline-none focus:border-[var(--color-brass)] focus:ring-2 focus:ring-[var(--color-brass)]/20"
+          >
+            <option value="">Non affectée</option>
+            {employees.map((e) => (
+              <option key={e.id} value={e.id}>
+                {e.firstName} {e.lastName}
+              </option>
+            ))}
+          </select>
+        </div>
+      ) : null}
 
       <div className="rounded-xl border border-[var(--color-line)] bg-[var(--color-paper-raised)] shadow-sm p-5">
         <h2 className="font-[family-name:var(--font-display)] text-lg text-[var(--color-ink)] mb-3">

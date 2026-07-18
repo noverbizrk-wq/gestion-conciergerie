@@ -28,10 +28,17 @@ export default async function MissionDetailPage({ params }: { params: Promise<{ 
   // staff de gestion : un AGENT consultant sa propre mission n'a pas accès à
   // listEmployeesAction (rôle insuffisant), on ne doit donc pas planter la
   // page pour lui — on lui passe simplement une liste vide.
-  const MANAGE_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"];
-  const employees = MANAGE_ROLES.includes(membership.role)
+  const EMPLOYEE_LIST_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"];
+  const employees = EMPLOYEE_LIST_ROLES.includes(membership.role)
     ? await listEmployeesAction(membership.companyId)
     : [];
+
+  // assignMissionAction est réservée à ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER"]
+  // (pas AGENT) : un intervenant ne doit pas voir le sélecteur de réaffectation,
+  // seulement les contrôles qui lui sont réellement ouverts (statut, checklist,
+  // photos, signalement).
+  const ASSIGN_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER"];
+  const canAssign = ASSIGN_ROLES.includes(membership.role);
 
   return (
     <div>
@@ -64,6 +71,7 @@ export default async function MissionDetailPage({ params }: { params: Promise<{ 
           status={mission.status}
           employeeId={mission.employeeId}
           employees={employees.map((e) => ({ id: e.id, firstName: e.firstName, lastName: e.lastName }))}
+          canAssign={canAssign}
           tasks={mission.tasks.map((t) => ({
             id: t.id,
             label: t.label,
