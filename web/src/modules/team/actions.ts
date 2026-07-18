@@ -10,7 +10,7 @@ import crypto from "crypto";
 export type AppRole = "ADMIN" | "ACCOUNTANT" | "EMPLOYEE" | "READONLY";
 
 export async function listMembersAction(companyId: string) {
-  await requireRole(companyId, ["ADMIN", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
+  await requireRole(companyId, ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
   return prisma.membership.findMany({
     where: { companyId },
     include: { user: true },

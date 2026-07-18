@@ -3,12 +3,26 @@ import { listMembersAction } from "@/modules/team/actions";
 import { InviteForm } from "./invite-form";
 import { MemberRow } from "./member-row";
 
+const TEAM_VIEW_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "EMPLOYEE", "READONLY"];
+
 export default async function TeamPage() {
   const membership = await getCurrentUserMembership();
   if (!membership) {
     return (
       <div className="rounded-xl border border-dashed border-[var(--color-line)] p-8 text-sm text-[var(--color-ink-soft)]">
         Votre compte n&apos;est rattaché à aucune société pour le moment.
+      </div>
+    );
+  }
+
+  // La page Équipe n'est pas ouverte au rôle AGENT (intervenant terrain) :
+  // listMembersAction refuse l'accès côté serveur. On affiche un message
+  // clair plutôt que de laisser l'action lever une UnauthorizedError non
+  // gérée (page en erreur).
+  if (!TEAM_VIEW_ROLES.includes(membership.role)) {
+    return (
+      <div className="rounded-xl border border-dashed border-[var(--color-line)] p-8 text-sm text-[var(--color-ink-soft)]">
+        Cette page n&apos;est pas accessible à votre rôle.
       </div>
     );
   }
