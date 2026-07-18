@@ -24,7 +24,14 @@ export default async function MissionDetailPage({ params }: { params: Promise<{ 
   const mission = await getMissionAction(id, membership.companyId);
   if (!mission) notFound();
 
-  const employees = await listEmployeesAction(membership.companyId);
+  // La liste des intervenants (pour réaffecter la mission) n'est utile qu'au
+  // staff de gestion : un AGENT consultant sa propre mission n'a pas accès à
+  // listEmployeesAction (rôle insuffisant), on ne doit donc pas planter la
+  // page pour lui — on lui passe simplement une liste vide.
+  const MANAGE_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"];
+  const employees = MANAGE_ROLES.includes(membership.role)
+    ? await listEmployeesAction(membership.companyId)
+    : [];
 
   return (
     <div>
