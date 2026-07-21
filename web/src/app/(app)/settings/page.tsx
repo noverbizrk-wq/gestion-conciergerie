@@ -2,12 +2,25 @@ import { getCurrentUserMembership } from "@/lib/auth-guard";
 import { getCompanySettingsAction } from "@/modules/settings/actions";
 import { SettingsForm } from "./settings-form";
 
+const SETTINGS_VIEW_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"];
+
 export default async function SettingsPage() {
   const membership = await getCurrentUserMembership();
   if (!membership) {
     return (
       <div className="rounded-lg border border-dashed border-[var(--color-line)] p-8 text-sm text-[var(--color-ink-soft)]">
         Votre compte n&apos;est rattaché à aucune société pour le moment.
+      </div>
+    );
+  }
+
+  // Les paramètres société (IBAN, SIRET, TVA...) ne sont pas ouverts au rôle
+  // EMPLOYEE : getCompanySettingsAction le refuse côté serveur, on affiche
+  // donc un message clair plutôt que de laisser planter la page.
+  if (!SETTINGS_VIEW_ROLES.includes(membership.role)) {
+    return (
+      <div className="rounded-lg border border-dashed border-[var(--color-line)] p-8 text-sm text-[var(--color-ink-soft)]">
+        Cette page n&apos;est pas accessible à votre rôle.
       </div>
     );
   }

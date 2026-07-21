@@ -3,7 +3,7 @@ import { listMembersAction } from "@/modules/team/actions";
 import { InviteForm } from "./invite-form";
 import { MemberRow } from "./member-row";
 
-const TEAM_VIEW_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "EMPLOYEE", "READONLY"];
+const TEAM_VIEW_ROLES = ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"];
 
 export default async function TeamPage() {
   const membership = await getCurrentUserMembership();

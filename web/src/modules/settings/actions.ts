@@ -6,7 +6,9 @@ import { writeAuditLog } from "@/lib/audit-log";
 import { revalidatePath } from "next/cache";
 
 export async function getCompanySettingsAction(companyId: string) {
-  await requireRole(companyId, ["ADMIN", "ACCOUNTANT", "EMPLOYEE", "READONLY"]);
+  // EMPLOYEE exclu : les paramètres société exposent des données sensibles
+  // (IBAN, SIRET, TVA) qui ne concernent que l'administration/comptabilité.
+  await requireRole(companyId, ["ADMIN", "SUPER_ADMIN", "OPERATIONAL_MANAGER", "ACCOUNTANT", "READONLY"]);
   return prisma.company.findUniqueOrThrow({ where: { id: companyId } });
 }
 
